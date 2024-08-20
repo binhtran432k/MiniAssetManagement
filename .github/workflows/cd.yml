@@ -18,14 +18,16 @@ jobs:
       - name: Install wasm
         run:  dotnet workload install wasm-tools
       - name: Publish
-        run: dotnet publish MiniAssetManagement.csproj -c Release
+        run: dotnet publish MiniAssetManagement.csproj -c Release -o release
       - name: Hack Github Pages
-        working-directory: ./bin/Release/net8.0/publish/wwwroot
-        run: cp index.html 404.html
+        working-directory: ./release/wwwroot
+        run: |
+         sed -i 's/<base href="\/" \/>/<base href="\/MiniAssetManagement\/" \/>/g' index.html
+         cp index.html 404.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./bin/Release/net8.0/publish/wwwroot
+          path: ./release/wwwroot
   deploy:
     name: Deploy Github Pages
     runs-on: ubuntu-latest
