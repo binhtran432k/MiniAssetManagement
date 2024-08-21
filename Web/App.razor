@@ -1,0 +1,28 @@
+﻿<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p role="alert">Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+
+@using UserService
+@inject ServiceGateway.ServiceGateway service
+@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
+
+@code {
+    protected override void OnInitialized()
+    {
+        if (localStorage.GetItem<string>("User") == null)
+        {
+            service.UserService.AddUser(new User { Username = "tigerfox" });
+            service.UserService.AddUser(new User { Username = "squirrel" });
+            service.UserService.AddUser(new User { Username = "kangaroo" });
+        }
+    }
+}

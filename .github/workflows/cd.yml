@@ -18,7 +18,7 @@ jobs:
       - name: Install wasm
         run:  dotnet workload install wasm-tools
       - name: Publish
-        run: dotnet publish MiniAssetManagement.csproj -c Release -o release
+        run: dotnet publish Web -c Release -o release
       - name: Hack Github Pages
         working-directory: ./release/wwwroot
         run: |

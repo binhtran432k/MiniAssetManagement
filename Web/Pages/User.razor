@@ -1,0 +1,34 @@
+@page "/user/{Username?}"
+
+<PageTitle>Home</PageTitle>
+
+@if (Username == null)
+{
+    <Home />
+}
+else if (user == null)
+{
+    <PageNotFound />
+}
+else
+{
+    <h1>Hello, @user.Username</h1>
+    <p>Your Id is <em class="text-secondary">@user.Id</em></p>
+    <p>Welcome to my Mini Asset Management.</p>
+}
+
+@inject ServiceGateway.ServiceGateway service
+
+@code {
+    [Parameter]
+    public string? Username { get; set; }
+    private UserService.User? user;
+
+    protected override void OnParametersSet()
+    {
+        if (Username != null)
+        {
+            user = service.UserService.FindUserByUsername(Username);
+        }
+    }
+}
