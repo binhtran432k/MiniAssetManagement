@@ -18,8 +18,7 @@ public class DeleteUserHandler(IRepository<User> _repository, IMediator _mediato
         aggregateToDelete.UpdateStatus(UserStatus.Deleted);
 
         await _repository.UpdateAsync(aggregateToDelete);
-        var domainEvent = new UserDeletedEvent(request.UserId);
-        await _mediator.Publish(domainEvent);
+        await _mediator.Publish(new UserDeletedEvent(request.UserId));
 
         return Result.Success();
     }
