@@ -1,28 +1,26 @@
 using Ardalis.SharedKernel;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using MiniAssetManagement.Core.DriveAggregate.Events;
-using MiniAssetManagement.Core.FolderAggregate;
 using MiniAssetManagement.Core.FolderAggregate.Events;
 using MiniAssetManagement.Core.FolderAggregate.Specifications;
 
-namespace MiniAssetManagement.Core.DriveAggregate.Handlers;
+namespace MiniAssetManagement.Core.FolderAggregate.Handlers;
 
-public class DriveDeletedNotificationHandler(
-    ILogger<DriveDeletedEvent> logger,
+public class FolderDeletedNotificationHandler(
+    ILogger<FolderDeletedEvent> logger,
     IMediator mediator,
     IRepository<Folder> folderRepository
-) : INotificationHandler<DriveDeletedEvent>
+) : INotificationHandler<FolderDeletedEvent>
 {
-    private readonly ILogger<DriveDeletedEvent> _logger = logger;
+    private readonly ILogger<FolderDeletedEvent> _logger = logger;
     private readonly IMediator _mediator = mediator;
     private readonly IRepository<Folder> _folderRepository = folderRepository;
 
-    public async Task Handle(DriveDeletedEvent domainEvent, CancellationToken cancellationToken)
+    public async Task Handle(FolderDeletedEvent domainEvent, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Deleting folders with drive {driveId}...", domainEvent.DriveId);
+        _logger.LogInformation("Deleting folders with parent {folderId}...", domainEvent.FolderId);
         var folders = await _folderRepository.ListAsync(
-            new FoldersByDriveIdSpec(domainEvent.DriveId),
+            new FoldersByParentIdSpec(domainEvent.FolderId),
             cancellationToken
         );
         foreach (var folder in folders)
