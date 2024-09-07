@@ -20,8 +20,8 @@ public class DeleteUserHandlerHandle
     [Test]
     public async Task ReturnsSuccessGivenValidId()
     {
-        // Mock
-        var user = UserFixture.GetUserDefault();
+        // Given
+        var user = UserFixture.CreateUserDefault();
         _repository
             .GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult((User?)user));
@@ -38,12 +38,13 @@ public class DeleteUserHandlerHandle
             .Received(1)
             .Publish(Arg.Any<UserDeletedEvent>(), Arg.Any<CancellationToken>());
         Assert.That(result.IsSuccess, Is.True, nameof(result.IsSuccess));
+        Assert.That(user.Status, Is.EqualTo(UserStatus.Deleted), nameof(user.Status));
     }
 
     [Test]
     public async Task ReturnsNotFoundGivenInvalidId()
     {
-        // Mock
+        // Given
         _repository
             .GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult((User?)null));

@@ -10,9 +10,9 @@ public class UserByIdSpecificationsConstructor
     public void FilterCollectionToOnlyReturnItemsWithValidId()
     {
         // Given
-        var user1 = UserFixture.MockUser(1, "a");
-        var user2 = UserFixture.MockUser(2, "b");
-        var user3 = UserFixture.MockUser(3, "c");
+        var user1 = UserFixture.CreateUser(1, "a");
+        var user2 = UserFixture.CreateUser(2, "b");
+        var user3 = UserFixture.CreateUser(3, "c");
         List<User> users = new() { user1, user2, user3 };
 
         // When
@@ -31,9 +31,9 @@ public class UserByIdSpecificationsConstructor
     public void FilterCollectionToReturnEmptyWithInvalidId()
     {
         // Given
-        var user1 = UserFixture.MockUser(1, "a");
-        var user2 = UserFixture.MockUser(2, "b");
-        var user3 = UserFixture.MockUser(3, "c");
+        var user1 = UserFixture.CreateUser(1, "a");
+        var user2 = UserFixture.CreateUser(2, "b");
+        var user3 = UserFixture.CreateUser(3, "c");
         List<User> users = new() { user1, user2, user3 };
 
         // When
@@ -48,9 +48,9 @@ public class UserByIdSpecificationsConstructor
     public void FilterCollectionToReturnEmptyWithDeletedId()
     {
         // Given
-        var user1 = UserFixture.MockUser(1, "a");
-        var user2 = UserFixture.MockDeletedUser(2, "b");
-        var user3 = UserFixture.MockUser(3, "c");
+        var user1 = UserFixture.CreateUser(1, "a");
+        var user2 = UserFixture.CreateUser(2, "b", UserStatus.Deleted);
+        var user3 = UserFixture.CreateUser(3, "c");
         List<User> users = new() { user1, user2, user3 };
 
         // When

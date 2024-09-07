@@ -1,5 +1,4 @@
 using MiniAssetManagement.Core.UserAggregate;
-using MiniAssetManagement.UseCases.Users;
 
 namespace MiniAssetManagement.UnitTests.Fixtures;
 
@@ -12,16 +11,13 @@ public static class UserFixture
     public const int IdDeleted = 2;
     public const int IdToDelete = 3;
 
-    public static User MockUser(int id, string username) => new(username) { Id = id };
-
-    public static User GetUserDefault() => MockUser(IdDefault, UsernameDefault);
-
-    public static User MockDeletedUser(int id, string username)
+    public static User CreateUser(int id, string username, UserStatus? status = null)
     {
-        var user = MockUser(id, username);
-        user.UpdateStatus(UserStatus.Deleted);
+        User user = new(username) { Id = id };
+        if (status != null)
+            user.UpdateStatus(status);
         return user;
     }
 
-    public static List<UserDTO> GetListUserDTODefault() => new() { new(1, "foo"), new(2, "bar") };
+    public static User CreateUserDefault() => CreateUser(IdDefault, UsernameDefault);
 }
