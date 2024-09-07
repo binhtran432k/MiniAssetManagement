@@ -16,8 +16,8 @@ public class CreateUserHandlerHandle
     [Test]
     public async Task ReturnsSuccessGivenValidInput()
     {
-        var user = UserFixture.GetUserDefault();
-        // Mock
+        // Given
+        var user = UserFixture.CreateUserDefault();
         _repository
             .AddAsync(Arg.Any<User>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(user));

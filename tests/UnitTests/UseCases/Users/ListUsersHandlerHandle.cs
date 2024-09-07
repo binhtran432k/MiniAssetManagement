@@ -1,4 +1,4 @@
-using MiniAssetManagement.UnitTests.Fixtures;
+using MiniAssetManagement.UseCases.Users;
 using MiniAssetManagement.UseCases.Users.List;
 using NSubstitute;
 
@@ -14,11 +14,11 @@ public class ListUsersHandlerHandle
     [Test]
     public async Task ReturnsEmptyWhenEmpty()
     {
-        // Mock
+        // Given
         _service.ListAsync().Returns([]);
 
         // When
-        var result = await _handler.Handle(new ListUsersQuery(null, null), CancellationToken.None);
+        var result = await _handler.Handle(new ListUsersQuery(), CancellationToken.None);
 
         // Then
         Assert.That(result.IsSuccess, Is.True, nameof(result.IsSuccess));
@@ -28,12 +28,12 @@ public class ListUsersHandlerHandle
     [Test]
     public async Task ReturnsUsersWhenNotEmpty()
     {
-        // Mock
-        var users = UserFixture.GetListUserDTODefault();
+        // Given
+        List<UserDTO> users = [new(1, "foo"), new(2, "bar")];
         _service.ListAsync().Returns(users);
 
         // When
-        var result = await _handler.Handle(new ListUsersQuery(null, null), CancellationToken.None);
+        var result = await _handler.Handle(new ListUsersQuery(), CancellationToken.None);
 
         // Then
         Assert.That(result.IsSuccess, Is.True, nameof(result.IsSuccess));

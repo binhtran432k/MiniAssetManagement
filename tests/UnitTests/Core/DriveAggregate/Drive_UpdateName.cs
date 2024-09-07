@@ -9,7 +9,7 @@ public class Drive_UpdateName
     public void UpdatesName()
     {
         // Given
-        var user = UserFixture.GetUserDefault();
+        var user = UserFixture.CreateUserDefault();
         Drive drive = new(DriveFixture.NameDefault, user.Id);
 
         // When

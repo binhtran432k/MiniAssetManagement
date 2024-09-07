@@ -17,8 +17,8 @@ public class UpdateUserHandlerHandle
     [Test]
     public async Task ReturnsSuccessGivenValidId()
     {
-        // Mock
-        var user = UserFixture.GetUserDefault();
+        // Given
+        var user = UserFixture.CreateUserDefault();
         _repository
             .GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult((User?)user));
@@ -50,7 +50,7 @@ public class UpdateUserHandlerHandle
     [Test]
     public async Task ReturnsNotFoundGivenInvalidId()
     {
-        // Mock
+        // Given
         _repository
             .GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult((User?)null));
@@ -68,6 +68,4 @@ public class UpdateUserHandlerHandle
         Assert.That(result.IsSuccess, Is.False, nameof(result.IsSuccess));
         Assert.That(result.Status, Is.EqualTo(ResultStatus.NotFound), nameof(result.Status));
     }
-
-    private User MockUser(string username, int id) => new(username) { Id = id };
 }

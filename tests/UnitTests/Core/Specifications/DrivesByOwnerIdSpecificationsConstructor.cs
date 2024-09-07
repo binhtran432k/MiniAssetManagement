@@ -1,5 +1,6 @@
 using MiniAssetManagement.Core.DriveAggregate;
 using MiniAssetManagement.Core.DriveAggregate.Specifications;
+using MiniAssetManagement.UnitTests.Fixtures;
 
 namespace MiniAssetManagement.UnitTests.Core.Specifications;
 
@@ -9,9 +10,9 @@ public class DrivesByOwnerIdSpecificationsConstructor
     public void FilterCollectionToOnlyReturnItemsWithValidOwnerId()
     {
         // Given
-        Drive drive1 = new("a", 1) { Id = 1 };
-        Drive drive2 = new("b", 2) { Id = 2 };
-        Drive drive3 = new("c", 1) { Id = 3 };
+        var drive1 = DriveFixture.CreateDrive(1, "a", 1);
+        var drive2 = DriveFixture.CreateDrive(2, "b", 2);
+        var drive3 = DriveFixture.CreateDrive(3, "c", 1);
         List<Drive> drives = new() { drive1, drive2, drive3 };
 
         // When
@@ -30,9 +31,9 @@ public class DrivesByOwnerIdSpecificationsConstructor
     public void FilterCollectionToReturnEmptyWithInvalidOwnerId()
     {
         // Given
-        Drive drive1 = new("a", 1) { Id = 1 };
-        Drive drive2 = new("b", 1) { Id = 2 };
-        Drive drive3 = new("c", 1) { Id = 3 };
+        var drive1 = DriveFixture.CreateDrive(1, "a", 1);
+        var drive2 = DriveFixture.CreateDrive(2, "b", 1);
+        var drive3 = DriveFixture.CreateDrive(3, "c", 1);
         List<Drive> drives = new() { drive1, drive2, drive3 };
 
         // When

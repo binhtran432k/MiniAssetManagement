@@ -11,8 +11,7 @@ public class ListUsersHandler(IListUsersQueryService _query)
         CancellationToken cancellationToken
     )
     {
-        var result = await _query.ListAsync();
-
+        var result = await _query.ListAsync(request.Skip, request.Take);
         return Result.Success(result);
     }
 }
