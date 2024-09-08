@@ -4,85 +4,97 @@ using MiniAssetManagement.Core.FolderAggregate;
 using MiniAssetManagement.Core.FolderAggregate.Specifications;
 using MiniAssetManagement.UnitTests.Fixtures;
 using MiniAssetManagement.UseCases.Folders.GetPermission;
-using MiniAssetManagement.UseCases.Folders.Update;
+using MiniAssetManagement.UseCases.Folders.RemovePermission;
 using NSubstitute;
 
 namespace MiniAssetManagement.UnitTests.UseCases.Folders;
 
-public class UpdateFolderHandlerHandle
+public class RemovePermissionHandlerHandle
 {
     private readonly IGetFolderPermissionQueryService _permissionService =
         Substitute.For<IGetFolderPermissionQueryService>();
     private readonly IRepository<Folder> _repository = Substitute.For<IRepository<Folder>>();
-    private UpdateFolderHandler _handler;
+    private RemovePermissionHandler _handler;
 
-    public UpdateFolderHandlerHandle() =>
-        _handler = new UpdateFolderHandler(_repository, _permissionService);
+    public RemovePermissionHandlerHandle() =>
+        _handler = new RemovePermissionHandler(_repository, _permissionService);
 
     [Test]
-    public async Task UpdatesFolderSuccess()
+    public async Task RemovesPermissionSuccess()
     {
         // Given
         _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(PermissionType.Admin);
         var folder = FolderFixture.CreateFolderDefaultFromDrive();
+        folder.AddOrUpdatePermission(UserFixture.IdAlternative, PermissionType.Reader);
         _repository
-            .FirstOrDefaultAsync(Arg.Any<FolderByIdSpec>(), Arg.Any<CancellationToken>())
+            .FirstOrDefaultAsync(
+                Arg.Any<FolderWithPermissionsByIdSpec>(),
+                Arg.Any<CancellationToken>()
+            )
             .Returns(folder);
 
         // When
         var result = await _handler.Handle(
-            new UpdateFolderCommand(
+            new RemovePermissionCommand(
                 FolderFixture.IdDefault,
                 UserFixture.IdDefault,
-                FolderFixture.NameNew
+                UserFixture.IdAlternative
             ),
             CancellationToken.None
         );
 
         // Then
-        await _repository.Received(1).UpdateAsync(folder, Arg.Any<CancellationToken>());
         Assert.That(result.IsSuccess, Is.True, nameof(result.IsSuccess));
-        Assert.Multiple(() =>
-        {
-            Assert.That(
-                result.Value.Id,
-                Is.EqualTo(FolderFixture.IdDefault),
-                nameof(result.Value.Id)
-            );
-            Assert.That(
-                result.Value.Name,
-                Is.EqualTo(FolderFixture.NameNew),
-                nameof(result.Value.Name)
-            );
-        });
+        Assert.That(
+            folder.Permissions,
+            Is.EquivalentTo(
+                new List<Permission>() { new(UserFixture.IdDefault, PermissionType.Admin) }
+            ),
+            nameof(folder.Permissions)
+        );
     }
 
-    [Test]
-    public async Task UpdatesFolderFailByUnauthorized()
+    [TestCase(1, 1)]
+    public async Task RemovesPermissionFailByConflict(int userId, int removeUserId)
+    {
+        // When
+        var result = await _handler.Handle(
+            new RemovePermissionCommand(FolderFixture.IdDefault, userId, removeUserId),
+            CancellationToken.None
+        );
+
+        // Then
+        Assert.That(result.IsSuccess, Is.False, nameof(result.IsSuccess));
+        Assert.That(result.Status, Is.EqualTo(ResultStatus.Conflict), nameof(result.Status));
+    }
+
+    [TestCase(null)]
+    [TestCase(nameof(PermissionType.Contributor))]
+    [TestCase(nameof(PermissionType.Reader))]
+    public async Task RemovesPermissionFailByUnauthorized(string? adminPermissionName)
     {
         // Given
-        _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns((PermissionType?)null);
+        PermissionType? adminPermission =
+            adminPermissionName == null ? null : PermissionType.FromName(adminPermissionName);
+        _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(adminPermission);
 
         // When
         var result = await _handler.Handle(
-            new UpdateFolderCommand(
-                FolderFixture.IdInvalid,
+            new RemovePermissionCommand(
+                FolderFixture.IdDefault,
                 UserFixture.IdDefault,
-                FolderFixture.NameDefault
+                UserFixture.IdAlternative
             ),
             CancellationToken.None
         );
 
         // Then
-        await _repository
-            .DidNotReceive()
-            .UpdateAsync(Arg.Any<Folder>(), Arg.Any<CancellationToken>());
         Assert.That(result.IsSuccess, Is.False, nameof(result.IsSuccess));
         Assert.That(result.Status, Is.EqualTo(ResultStatus.Unauthorized), nameof(result.Status));
     }
 
     [Test]
-    public async Task GetsFolderFailByNotFound()
+    public async Task RemovesPermissionFailByNotFound()
     {
         // Given
         _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(PermissionType.Admin);
@@ -92,18 +104,15 @@ public class UpdateFolderHandlerHandle
 
         // When
         var result = await _handler.Handle(
-            new UpdateFolderCommand(
-                FolderFixture.IdInvalid,
+            new RemovePermissionCommand(
+                FolderFixture.IdDefault,
                 UserFixture.IdDefault,
-                FolderFixture.NameDefault
+                UserFixture.IdAlternative
             ),
             CancellationToken.None
         );
 
         // Then
-        await _repository
-            .DidNotReceive()
-            .UpdateAsync(Arg.Any<Folder>(), Arg.Any<CancellationToken>());
         Assert.That(result.IsSuccess, Is.False, nameof(result.IsSuccess));
         Assert.That(result.Status, Is.EqualTo(ResultStatus.NotFound), nameof(result.Status));
     }

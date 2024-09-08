@@ -6,6 +6,7 @@ public static class FolderFixture
 {
     public const string NameDefault = "test name";
     public const string NameNew = "new name";
+    public const int UserIdContributor = 2;
     public const int DriveIdDefault = 1;
     public const int ParentIdDefault = 2;
     public const int IdDefault = 1;
@@ -21,7 +22,7 @@ public static class FolderFixture
     )
     {
         var folder = Folder.CreateFromDrive(name, driveId);
-        folder.AddPermission(new(UserFixture.IdDefault, PermissionType.Admin));
+        folder.AddOrUpdatePermission(UserFixture.IdDefault, PermissionType.Admin);
         folder.Id = id;
         if (status != null)
             folder.UpdateStatus(status);
@@ -36,7 +37,7 @@ public static class FolderFixture
     )
     {
         var folder = Folder.CreateFromFolder(name, folderId);
-        folder.AddPermission(new(UserFixture.IdDefault, PermissionType.Admin));
+        folder.AddOrUpdatePermission(UserFixture.IdDefault, PermissionType.Admin);
         folder.Id = id;
         if (status != null)
             folder.UpdateStatus(status);

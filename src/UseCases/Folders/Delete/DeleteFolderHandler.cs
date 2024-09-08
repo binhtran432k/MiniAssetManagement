@@ -3,14 +3,15 @@ using Ardalis.SharedKernel;
 using MediatR;
 using MiniAssetManagement.Core.FolderAggregate;
 using MiniAssetManagement.Core.FolderAggregate.Events;
-using MiniAssetManagement.UseCases.Folders.Get;
+using MiniAssetManagement.Core.FolderAggregate.Specifications;
+using MiniAssetManagement.UseCases.Folders.GetPermission;
 
 namespace MiniAssetManagement.UseCases.Folders.Delete;
 
 public class DeleteFolderHandler(
     IRepository<Folder> _repository,
     IMediator _mediator,
-    IGetFolderQueryService _query
+    IGetFolderPermissionQueryService _permissionQuery
 ) : ICommandHandler<DeleteFolderCommand, Result>
 {
     public async Task<Result> Handle(
@@ -18,7 +19,13 @@ public class DeleteFolderHandler(
         CancellationToken cancellationToken
     )
     {
-        var aggregateToDelete = await _query.GetAsync(request.FolderId, request.UserId);
+        var permission = await _permissionQuery.GetAsync(request.FolderId, request.UserId);
+        if (permission != PermissionType.Admin && permission != PermissionType.Contributor)
+            return Result.Unauthorized();
+
+        var aggregateToDelete = await _repository.FirstOrDefaultAsync(
+            new FolderByIdSpec(request.FolderId)
+        );
         if (aggregateToDelete == null)
             return Result.NotFound();
 

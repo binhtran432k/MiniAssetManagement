@@ -12,4 +12,6 @@ public class Permission(int userId, PermissionType type) : ValueObject
         yield return UserId;
         yield return Type;
     }
+
+    public void SetType(PermissionType type) => Type = type;
 }
