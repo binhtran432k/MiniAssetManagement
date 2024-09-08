@@ -10,6 +10,7 @@ public static class UserFixture
     public const int IdInvalid = 100;
     public const int IdDeleted = 2;
     public const int IdToDelete = 3;
+    public const int IdAlternative = 4;
 
     public static User CreateUser(int id, string username, UserStatus? status = null)
     {

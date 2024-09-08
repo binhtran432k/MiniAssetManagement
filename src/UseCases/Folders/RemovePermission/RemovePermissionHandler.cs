@@ -4,31 +4,36 @@ using MiniAssetManagement.Core.FolderAggregate;
 using MiniAssetManagement.Core.FolderAggregate.Specifications;
 using MiniAssetManagement.UseCases.Folders.GetPermission;
 
-namespace MiniAssetManagement.UseCases.Folders.Update;
+namespace MiniAssetManagement.UseCases.Folders.RemovePermission;
 
-public class UpdateFolderHandler(
+public class RemovePermissionHandler(
     IRepository<Folder> _repository,
     IGetFolderPermissionQueryService _permissionQuery
-) : ICommandHandler<UpdateFolderCommand, Result<FolderDTO>>
+) : ICommandHandler<RemovePermissionCommand, Result>
 {
-    public async Task<Result<FolderDTO>> Handle(
-        UpdateFolderCommand request,
+    public async Task<Result> Handle(
+        RemovePermissionCommand request,
         CancellationToken cancellationToken
     )
     {
+        if (request.UserId == request.RemoveUserId)
+            return Result.Conflict();
+
         var permission = await _permissionQuery.GetAsync(request.FolderId, request.UserId);
-        if (permission != PermissionType.Admin && permission != PermissionType.Contributor)
+        if (permission != PermissionType.Admin)
             return Result.Unauthorized();
 
         var existingFolder = await _repository.FirstOrDefaultAsync(
-            new FolderByIdSpec(request.FolderId)
+            new FolderWithPermissionsByIdSpec(request.FolderId),
+            cancellationToken
         );
         if (existingFolder == null)
             return Result.NotFound();
 
-        existingFolder.UpdateName(request.NewName);
-        await _repository.UpdateAsync(existingFolder, cancellationToken);
+        existingFolder.RemovePermissionByUserId(request.RemoveUserId);
 
-        return new FolderDTO(existingFolder.Id, existingFolder.Name);
+        await _repository.UpdateAsync(existingFolder);
+
+        return Result.Success();
     }
 }

@@ -3,29 +3,34 @@ using Ardalis.SharedKernel;
 using MediatR;
 using MiniAssetManagement.Core.FolderAggregate;
 using MiniAssetManagement.Core.FolderAggregate.Events;
+using MiniAssetManagement.Core.FolderAggregate.Specifications;
 using MiniAssetManagement.UnitTests.Fixtures;
 using MiniAssetManagement.UseCases.Folders.Delete;
-using MiniAssetManagement.UseCases.Folders.Get;
+using MiniAssetManagement.UseCases.Folders.GetPermission;
 using NSubstitute;
 
 namespace MiniAssetManagement.UnitTests.UseCases.Folders;
 
 public class DeleteFolderHandlerHandle
 {
-    private readonly IGetFolderQueryService _service = Substitute.For<IGetFolderQueryService>();
+    private readonly IGetFolderPermissionQueryService _permissionService =
+        Substitute.For<IGetFolderPermissionQueryService>();
     private readonly IRepository<Folder> _repository = Substitute.For<IRepository<Folder>>();
     private readonly IMediator _mediator = Substitute.For<IMediator>();
     private DeleteFolderHandler _handler;
 
     public DeleteFolderHandlerHandle() =>
-        _handler = new DeleteFolderHandler(_repository, _mediator, _service);
+        _handler = new DeleteFolderHandler(_repository, _mediator, _permissionService);
 
     [Test]
-    public async Task ReturnsSuccessGivenValidId()
+    public async Task DeletesSuccess()
     {
         // Given
+        _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(PermissionType.Admin);
         var folder = FolderFixture.CreateFolderDefaultFromDrive();
-        _service.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(folder);
+        _repository
+            .FirstOrDefaultAsync(Arg.Any<FolderByIdSpec>(), Arg.Any<CancellationToken>())
+            .Returns(folder);
 
         // When
         var result = await _handler.Handle(
@@ -43,10 +48,36 @@ public class DeleteFolderHandlerHandle
     }
 
     [Test]
-    public async Task ReturnsNotFoundGivenInvalidId()
+    public async Task DeletesFailByUnauthorized()
     {
         // Given
-        _service.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult((Folder?)null));
+        _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(PermissionType.Reader);
+
+        // When
+        var result = await _handler.Handle(
+            new DeleteFolderCommand(FolderFixture.IdInvalid, UserFixture.IdDefault),
+            CancellationToken.None
+        );
+
+        // Then
+        await _repository
+            .DidNotReceive()
+            .UpdateAsync(Arg.Any<Folder>(), Arg.Any<CancellationToken>());
+        await _mediator
+            .DidNotReceive()
+            .Publish(Arg.Any<FolderDeletedEvent>(), Arg.Any<CancellationToken>());
+        Assert.That(result.IsSuccess, Is.False, nameof(result.IsSuccess));
+        Assert.That(result.Status, Is.EqualTo(ResultStatus.Unauthorized), nameof(result.Status));
+    }
+
+    [Test]
+    public async Task DeletesFailByNotFound()
+    {
+        // Given
+        _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(PermissionType.Admin);
+        _repository
+            .FirstOrDefaultAsync(Arg.Any<FolderByIdSpec>(), Arg.Any<CancellationToken>())
+            .Returns((Folder?)null);
 
         // When
         var result = await _handler.Handle(

@@ -1,17 +1,26 @@
 using Ardalis.Result;
 using Ardalis.SharedKernel;
+using MiniAssetManagement.Core.FolderAggregate;
+using MiniAssetManagement.Core.FolderAggregate.Specifications;
+using MiniAssetManagement.UseCases.Folders.GetPermission;
 
 namespace MiniAssetManagement.UseCases.Folders.Get;
 
-public class GetFolderHandler(IGetFolderQueryService _query)
-    : IQueryHandler<GetFolderQuery, Result<FolderDTO>>
+public class GetFolderHandler(
+    IRepository<Folder> _repository,
+    IGetFolderPermissionQueryService _permissionQuery
+) : IQueryHandler<GetFolderQuery, Result<FolderDTO>>
 {
     public async Task<Result<FolderDTO>> Handle(
         GetFolderQuery request,
         CancellationToken cancellationToken
     )
     {
-        var entity = await _query.GetAsync(request.FolderId, request.UserId);
+        var permission = await _permissionQuery.GetAsync(request.FolderId, request.UserId);
+        if (permission == null)
+            return Result.Unauthorized();
+
+        var entity = await _repository.FirstOrDefaultAsync(new FolderByIdSpec(request.FolderId));
         if (entity == null)
             return Result.NotFound();
 

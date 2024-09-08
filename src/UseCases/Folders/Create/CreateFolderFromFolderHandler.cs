@@ -13,7 +13,7 @@ public class CreateFolderFromFolderHandler(IRepository<Folder> _repository)
     )
     {
         var newFolder = Folder.CreateFromFolder(request.Name, request.FolderId);
-        newFolder.AddPermission(new(request.AdminId, PermissionType.Admin));
+        newFolder.AddOrUpdatePermission(request.AdminId, PermissionType.Admin);
         var createdItem = await _repository.AddAsync(newFolder, cancellationToken);
 
         return createdItem.Id;

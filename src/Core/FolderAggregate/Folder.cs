@@ -27,5 +27,15 @@ public class Folder : EntityBase, IAggregateRoot
 
     public void UpdateStatus(FolderStatus newStatus) => Status = newStatus;
 
-    public void AddPermission(Permission permission) => _permissions.Add(permission);
+    public void AddOrUpdatePermission(int userId, PermissionType type)
+    {
+        var permission = _permissions.Find(p => p.UserId == userId);
+        if (permission is null)
+            _permissions.Add(new(userId, type));
+        else
+            permission.SetType(type);
+    }
+
+    public void RemovePermissionByUserId(int userId) =>
+        _permissions.RemoveAll(p => p.UserId == userId);
 }
