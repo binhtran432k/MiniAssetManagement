@@ -1,5 +1,7 @@
 name: CI
 on:
+  push:
+    branches: [main]
   pull_request:
 
 jobs:
@@ -15,3 +17,4 @@ jobs:
         run: dotnet build
       - name: Run Test
         run: dotnet test
+
