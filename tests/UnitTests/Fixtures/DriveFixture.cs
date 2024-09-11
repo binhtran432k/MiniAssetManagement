@@ -16,7 +16,7 @@ public static class DriveFixture
     {
         Drive drive = new(name, ownerId);
         drive.Id = id;
-        if (status != null)
+        if (status is not null)
             drive.UpdateStatus(status);
         return drive;
     }

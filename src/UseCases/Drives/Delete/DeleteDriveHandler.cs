@@ -18,7 +18,7 @@ public class DeleteDriveHandler(IRepository<Drive> _repository, IMediator _media
         var aggregateToDelete = await _repository.FirstOrDefaultAsync(
             new DriveByIdAndOwnerIdSpec(request.DriveId, request.OwnerId)
         );
-        if (aggregateToDelete == null)
+        if (aggregateToDelete is null)
             return Result.NotFound();
 
         aggregateToDelete.UpdateStatus(DriveStatus.Deleted);

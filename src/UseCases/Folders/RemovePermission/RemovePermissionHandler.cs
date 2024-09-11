@@ -27,7 +27,7 @@ public class RemovePermissionHandler(
             new FolderWithPermissionsByIdSpec(request.FolderId),
             cancellationToken
         );
-        if (existingFolder == null)
+        if (existingFolder is null)
             return Result.NotFound();
 
         existingFolder.RemovePermissionByUserId(request.RemoveUserId);

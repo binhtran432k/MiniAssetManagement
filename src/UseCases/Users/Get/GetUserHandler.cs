@@ -15,7 +15,7 @@ public class GetUserHandler(IReadRepository<User> _repository)
     {
         var spec = new UserByIdSpec(request.UserId);
         var entity = await _repository.FirstOrDefaultAsync(spec, cancellationToken);
-        if (entity == null)
+        if (entity is null)
             return Result.NotFound();
 
         return new UserDTO(entity.Id, entity.Username);

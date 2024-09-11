@@ -13,6 +13,7 @@ public class Folder_AddOrUpdatePermission
             FolderFixture.NameDefault,
             FolderFixture.DriveIdDefault
         );
+        folder.Id = FolderFixture.IdDefault;
 
         // When
         folder.AddOrUpdatePermission(UserFixture.IdDefault, PermissionType.Admin);
@@ -21,7 +22,10 @@ public class Folder_AddOrUpdatePermission
         Assert.That(
             folder.Permissions,
             Is.EquivalentTo(
-                new List<Permission>() { new(UserFixture.IdDefault, PermissionType.Admin) }
+                new List<Permission>()
+                {
+                    new(FolderFixture.IdDefault, UserFixture.IdDefault, PermissionType.Admin),
+                }
             ),
             nameof(folder.Permissions)
         );
@@ -31,20 +35,20 @@ public class Folder_AddOrUpdatePermission
     public void UpdatesPermissionSuccess()
     {
         // Given
-        Folder folder = Folder.CreateFromDrive(
-            FolderFixture.NameDefault,
-            FolderFixture.DriveIdDefault
-        );
-        folder.AddOrUpdatePermission(UserFixture.IdDefault, PermissionType.Admin);
+        var folder = FolderFixture.CreateFolderDefaultFromDrive();
+        var testPermission = PermissionType.Contributor;
 
         // When
-        folder.AddOrUpdatePermission(UserFixture.IdDefault, PermissionType.Contributor);
+        folder.AddOrUpdatePermission(UserFixture.IdDefault, testPermission);
 
         // Then
         Assert.That(
             folder.Permissions,
             Is.EquivalentTo(
-                new List<Permission>() { new(UserFixture.IdDefault, PermissionType.Contributor) }
+                new List<Permission>()
+                {
+                    new(FolderFixture.IdDefault, UserFixture.IdDefault, testPermission),
+                }
             ),
             nameof(folder.Permissions)
         );

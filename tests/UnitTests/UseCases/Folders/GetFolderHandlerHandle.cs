@@ -19,11 +19,15 @@ public class GetFolderHandlerHandle
     public GetFolderHandlerHandle() =>
         _handler = new GetFolderHandler(_repository, _permissionService);
 
-    [Test]
-    public async Task GetsFolderSuccess()
+    [TestCase(nameof(PermissionType.Admin))]
+    [TestCase(nameof(PermissionType.Contributor))]
+    [TestCase(nameof(PermissionType.Reader))]
+    public async Task GetsFolderSuccess(string adminPermissionName)
     {
         // Given
-        _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(PermissionType.Admin);
+        _permissionService
+            .GetAsync(Arg.Any<int>(), Arg.Any<int>())
+            .Returns(PermissionType.FromName(adminPermissionName));
         var folder = FolderFixture.CreateFolderDefaultFromDrive();
         _repository
             .FirstOrDefaultAsync(Arg.Any<FolderByIdSpec>(), Arg.Any<CancellationToken>())

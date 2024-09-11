@@ -30,7 +30,7 @@ public class AddOrUpdatePermissionHandler(
             new FolderWithPermissionsByIdSpec(request.FolderId),
             cancellationToken
         );
-        if (existingFolder == null)
+        if (existingFolder is null)
             return Result.NotFound();
 
         existingFolder.AddOrUpdatePermission(

@@ -52,8 +52,8 @@ public class AddOrUpdatePermissionHandlerHandle
             Is.EquivalentTo(
                 new List<Permission>()
                 {
-                    new(UserFixture.IdDefault, PermissionType.Admin),
-                    new(UserFixture.IdAlternative, permission),
+                    new(FolderFixture.IdDefault, UserFixture.IdDefault, PermissionType.Admin),
+                    new(FolderFixture.IdDefault, UserFixture.IdAlternative, permission),
                 }
             ),
             nameof(folder.Permissions)
@@ -91,7 +91,7 @@ public class AddOrUpdatePermissionHandlerHandle
     {
         // Given
         PermissionType? adminPermission =
-            adminPermissionName == null ? null : PermissionType.FromName(adminPermissionName);
+            adminPermissionName is null ? null : PermissionType.FromName(adminPermissionName);
         _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(adminPermission);
 
         // When

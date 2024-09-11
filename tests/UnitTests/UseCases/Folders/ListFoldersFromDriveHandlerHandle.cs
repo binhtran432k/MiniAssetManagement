@@ -1,3 +1,7 @@
+using Ardalis.Result;
+using Ardalis.SharedKernel;
+using MiniAssetManagement.Core.DriveAggregate;
+using MiniAssetManagement.Core.DriveAggregate.Specifications;
 using MiniAssetManagement.UnitTests.Fixtures;
 using MiniAssetManagement.UseCases.Folders;
 using MiniAssetManagement.UseCases.Folders.List;
@@ -8,23 +12,22 @@ namespace MiniAssetManagement.UnitTests.UseCases.Folders;
 public class ListFoldersFromDriveHandlerHandle
 {
     private readonly IListFoldersQueryService _service = Substitute.For<IListFoldersQueryService>();
+    private readonly IRepository<Drive> _driveRepository = Substitute.For<IRepository<Drive>>();
     private ListFoldersFromDriveHandler _handler;
 
     public ListFoldersFromDriveHandlerHandle() =>
-        _handler = new ListFoldersFromDriveHandler(_service);
+        _handler = new ListFoldersFromDriveHandler(_driveRepository, _service);
 
     [Test]
-    public async Task ReturnsFolders()
+    public async Task ReturnsFoldersSuccess()
     {
         // Given
+        _driveRepository
+            .CountAsync(Arg.Any<DriveByIdAndOwnerIdSpec>(), Arg.Any<CancellationToken>())
+            .Returns(1);
         List<FolderDTO> drives = [new(1, "foo"), new(2, "bar")];
         _service
-            .ListFromDriveAsync(
-                UserFixture.IdDefault,
-                FolderFixture.DriveIdDefault,
-                Arg.Any<int?>(),
-                Arg.Any<int?>()
-            )
+            .ListFromDriveAsync(FolderFixture.DriveIdDefault, Arg.Any<int?>(), Arg.Any<int?>())
             .Returns(drives);
 
         // When
@@ -36,5 +39,28 @@ public class ListFoldersFromDriveHandlerHandle
         // Then
         Assert.That(result.IsSuccess, Is.True, nameof(result.IsSuccess));
         Assert.That(result.Value, Is.EquivalentTo(drives), nameof(result.Value));
+    }
+
+    [Test]
+    public async Task ReturnsFoldersFailByUnauthorized()
+    {
+        // Given
+        _driveRepository
+            .CountAsync(Arg.Any<DriveByIdAndOwnerIdSpec>(), Arg.Any<CancellationToken>())
+            .Returns(0);
+        List<FolderDTO> drives = [new(1, "foo"), new(2, "bar")];
+        _service
+            .ListFromDriveAsync(FolderFixture.DriveIdDefault, Arg.Any<int?>(), Arg.Any<int?>())
+            .Returns(drives);
+
+        // When
+        var result = await _handler.Handle(
+            new ListFoldersFromDriveQuery(UserFixture.IdDefault, FolderFixture.DriveIdDefault),
+            CancellationToken.None
+        );
+
+        // Then
+        Assert.That(result.IsSuccess, Is.False, nameof(result.IsSuccess));
+        Assert.That(result.Status, Is.EqualTo(ResultStatus.Unauthorized), nameof(result.Status));
     }
 }

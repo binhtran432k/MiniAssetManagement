@@ -26,7 +26,7 @@ public class DeleteFolderHandler(
         var aggregateToDelete = await _repository.FirstOrDefaultAsync(
             new FolderByIdSpec(request.FolderId)
         );
-        if (aggregateToDelete == null)
+        if (aggregateToDelete is null)
             return Result.NotFound();
 
         aggregateToDelete.UpdateStatus(FolderStatus.Deleted);
