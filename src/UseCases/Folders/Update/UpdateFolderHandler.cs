@@ -23,7 +23,7 @@ public class UpdateFolderHandler(
         var existingFolder = await _repository.FirstOrDefaultAsync(
             new FolderByIdSpec(request.FolderId)
         );
-        if (existingFolder == null)
+        if (existingFolder is null)
             return Result.NotFound();
 
         existingFolder.UpdateName(request.NewName);

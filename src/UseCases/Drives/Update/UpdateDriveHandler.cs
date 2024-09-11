@@ -16,7 +16,7 @@ public class UpdateDriveHandler(IRepository<Drive> _repository)
         var existingDrive = await _repository.FirstOrDefaultAsync(
             new DriveByIdAndOwnerIdSpec(request.DriveId, request.OwnerId)
         );
-        if (existingDrive == null)
+        if (existingDrive is null)
             return Result.NotFound();
 
         existingDrive.UpdateName(request.NewName);

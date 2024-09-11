@@ -22,9 +22,9 @@ public static class FolderFixture
     )
     {
         var folder = Folder.CreateFromDrive(name, driveId);
-        folder.AddOrUpdatePermission(UserFixture.IdDefault, PermissionType.Admin);
         folder.Id = id;
-        if (status != null)
+        folder.AddOrUpdatePermission(UserFixture.IdDefault, PermissionType.Admin);
+        if (status is not null)
             folder.UpdateStatus(status);
         return folder;
     }
@@ -37,9 +37,9 @@ public static class FolderFixture
     )
     {
         var folder = Folder.CreateFromFolder(name, folderId);
-        folder.AddOrUpdatePermission(UserFixture.IdDefault, PermissionType.Admin);
         folder.Id = id;
-        if (status != null)
+        folder.AddOrUpdatePermission(UserFixture.IdDefault, PermissionType.Admin);
+        if (status is not null)
             folder.UpdateStatus(status);
         return folder;
     }

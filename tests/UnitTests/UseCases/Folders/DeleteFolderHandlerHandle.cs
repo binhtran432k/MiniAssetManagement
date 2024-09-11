@@ -22,11 +22,20 @@ public class DeleteFolderHandlerHandle
     public DeleteFolderHandlerHandle() =>
         _handler = new DeleteFolderHandler(_repository, _mediator, _permissionService);
 
-    [Test]
-    public async Task DeletesSuccess()
+    [TearDown]
+    public void TearDown()
+    {
+        _mediator.ClearReceivedCalls();
+    }
+
+    [TestCase(nameof(PermissionType.Admin))]
+    [TestCase(nameof(PermissionType.Contributor))]
+    public async Task DeletesSuccess(string adminPermissionName)
     {
         // Given
-        _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(PermissionType.Admin);
+        _permissionService
+            .GetAsync(Arg.Any<int>(), Arg.Any<int>())
+            .Returns(PermissionType.FromName(adminPermissionName));
         var folder = FolderFixture.CreateFolderDefaultFromDrive();
         _repository
             .FirstOrDefaultAsync(Arg.Any<FolderByIdSpec>(), Arg.Any<CancellationToken>())
@@ -47,11 +56,15 @@ public class DeleteFolderHandlerHandle
         Assert.That(folder.Status, Is.EqualTo(FolderStatus.Deleted), nameof(folder.Status));
     }
 
-    [Test]
-    public async Task DeletesFailByUnauthorized()
+    [TestCase(null)]
+    [TestCase(nameof(PermissionType.Reader))]
+    public async Task DeletesFailByUnauthorized(string? adminPermissionName)
     {
         // Given
-        _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(PermissionType.Reader);
+        PermissionType? adminPermission = adminPermissionName is null
+            ? null
+            : PermissionType.FromName(adminPermissionName);
+        _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(adminPermission);
 
         // When
         var result = await _handler.Handle(

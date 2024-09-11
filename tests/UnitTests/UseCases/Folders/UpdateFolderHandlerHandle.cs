@@ -19,11 +19,14 @@ public class UpdateFolderHandlerHandle
     public UpdateFolderHandlerHandle() =>
         _handler = new UpdateFolderHandler(_repository, _permissionService);
 
-    [Test]
-    public async Task UpdatesFolderSuccess()
+    [TestCase(nameof(PermissionType.Admin))]
+    [TestCase(nameof(PermissionType.Contributor))]
+    public async Task UpdatesFolderSuccess(string adminPermissionName)
     {
         // Given
-        _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(PermissionType.Admin);
+        _permissionService
+            .GetAsync(Arg.Any<int>(), Arg.Any<int>())
+            .Returns(PermissionType.FromName(adminPermissionName));
         var folder = FolderFixture.CreateFolderDefaultFromDrive();
         _repository
             .FirstOrDefaultAsync(Arg.Any<FolderByIdSpec>(), Arg.Any<CancellationToken>())
@@ -57,11 +60,14 @@ public class UpdateFolderHandlerHandle
         });
     }
 
-    [Test]
-    public async Task UpdatesFolderFailByUnauthorized()
+    [TestCase(null)]
+    [TestCase(nameof(PermissionType.Reader))]
+    public async Task UpdatesFolderFailByUnauthorized(string? adminPermissionName)
     {
         // Given
-        _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns((PermissionType?)null);
+        PermissionType? adminPermission =
+            adminPermissionName is null ? null : PermissionType.FromName(adminPermissionName);
+        _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(adminPermission);
 
         // When
         var result = await _handler.Handle(

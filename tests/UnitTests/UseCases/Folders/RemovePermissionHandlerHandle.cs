@@ -48,7 +48,10 @@ public class RemovePermissionHandlerHandle
         Assert.That(
             folder.Permissions,
             Is.EquivalentTo(
-                new List<Permission>() { new(UserFixture.IdDefault, PermissionType.Admin) }
+                new List<Permission>()
+                {
+                    new(FolderFixture.IdDefault, UserFixture.IdDefault, PermissionType.Admin),
+                }
             ),
             nameof(folder.Permissions)
         );
@@ -74,8 +77,9 @@ public class RemovePermissionHandlerHandle
     public async Task RemovesPermissionFailByUnauthorized(string? adminPermissionName)
     {
         // Given
-        PermissionType? adminPermission =
-            adminPermissionName == null ? null : PermissionType.FromName(adminPermissionName);
+        PermissionType? adminPermission = adminPermissionName is null
+            ? null
+            : PermissionType.FromName(adminPermissionName);
         _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(adminPermission);
 
         // When

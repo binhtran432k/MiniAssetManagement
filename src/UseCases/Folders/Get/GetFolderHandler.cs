@@ -17,11 +17,11 @@ public class GetFolderHandler(
     )
     {
         var permission = await _permissionQuery.GetAsync(request.FolderId, request.UserId);
-        if (permission == null)
+        if (permission is null)
             return Result.Unauthorized();
 
         var entity = await _repository.FirstOrDefaultAsync(new FolderByIdSpec(request.FolderId));
-        if (entity == null)
+        if (entity is null)
             return Result.NotFound();
 
         return new FolderDTO(entity.Id, entity.Name);

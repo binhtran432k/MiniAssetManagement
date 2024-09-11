@@ -15,7 +15,7 @@ public class GetDriveHandler(IReadRepository<Drive> _repository)
     {
         DriveByIdAndOwnerIdSpec spec = new(request.DriveId, request.OwnerId);
         var entity = await _repository.FirstOrDefaultAsync(spec, cancellationToken);
-        if (entity == null)
+        if (entity is null)
             return Result.NotFound();
 
         return new DriveDTO(entity.Id, entity.Name);

@@ -12,7 +12,7 @@ public class DeleteUserHandler(IRepository<User> _repository, IMediator _mediato
     public async Task<Result> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
         var aggregateToDelete = await _repository.GetByIdAsync(request.UserId);
-        if (aggregateToDelete == null)
+        if (aggregateToDelete is null)
             return Result.NotFound();
 
         aggregateToDelete.UpdateStatus(UserStatus.Deleted);

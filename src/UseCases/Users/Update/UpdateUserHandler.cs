@@ -13,7 +13,7 @@ public class UpdateUserHandler(IRepository<User> _repository)
     )
     {
         var existingUser = await _repository.GetByIdAsync(request.UserId);
-        if (existingUser == null)
+        if (existingUser is null)
             return Result.NotFound();
 
         existingUser.UpdateUsername(request.NewUsername);

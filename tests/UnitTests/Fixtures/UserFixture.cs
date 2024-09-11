@@ -15,7 +15,7 @@ public static class UserFixture
     public static User CreateUser(int id, string username, UserStatus? status = null)
     {
         User user = new(username) { Id = id };
-        if (status != null)
+        if (status is not null)
             user.UpdateStatus(status);
         return user;
     }
