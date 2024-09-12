@@ -21,10 +21,13 @@ public class TestListDrivesQueryService : BaseTest
         await repository.AddAsync(new("bar", _testUserId));
         await repository.AddAsync(new("baz", _testUserId));
         await repository.AddAsync(new("qux", _testUserId));
+        _testCount = 5;
+
+        Drive deleted = new("deleteddrive", _testUserId);
+        deleted.UpdateStatus(DriveStatus.Deleted);
+        await repository.AddAsync(deleted);
 
         await repository.SaveChangesAsync();
-
-        _testCount = 5;
     }
 
     [TestCaseSource(nameof(SourceListAsyncSuccess))]

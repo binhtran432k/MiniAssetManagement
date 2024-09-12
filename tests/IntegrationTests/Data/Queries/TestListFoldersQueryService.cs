@@ -31,16 +31,24 @@ public class TestListFoldersQueryService : BaseTest
         await repository.AddAsync(Folder.CreateFromDrive("bar", _testDriveId));
         await repository.AddAsync(Folder.CreateFromDrive("baz", _testDriveId));
         await repository.AddAsync(Folder.CreateFromDrive("qux", _testDriveId));
-
         _testFromDriveCount = 5;
+
+        var deletedFromDrive = Folder.CreateFromDrive("deletedfolder", _testDriveId);
+        deletedFromDrive.UpdateStatus(FolderStatus.Deleted);
+        await repository.AddAsync(deletedFromDrive);
 
         await repository.AddAsync(Folder.CreateFromFolder("foobar2", _testFolderId));
         await repository.AddAsync(Folder.CreateFromFolder("foo2", _testFolderId));
         await repository.AddAsync(Folder.CreateFromFolder("bar2", _testFolderId));
         await repository.AddAsync(Folder.CreateFromFolder("baz2", _testFolderId));
         await repository.AddAsync(Folder.CreateFromFolder("qux2", _testFolderId));
-
         _testFromFolderCount = 5;
+
+        var deletedFromFolder = Folder.CreateFromFolder("deletedfolder2", _testFolderId);
+        deletedFromFolder.UpdateStatus(FolderStatus.Deleted);
+        await repository.AddAsync(deletedFromFolder);
+
+        await repository.SaveChangesAsync();
     }
 
     [TestCaseSource(nameof(SourceListFromDriveAsyncSuccess))]

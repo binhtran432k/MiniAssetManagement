@@ -3,6 +3,7 @@ using Ardalis.SharedKernel;
 using MediatR;
 using MiniAssetManagement.Core.UserAggregate;
 using MiniAssetManagement.Core.UserAggregate.Events;
+using MiniAssetManagement.Core.UserAggregate.Specifications;
 using MiniAssetManagement.UnitTests.Fixtures;
 using MiniAssetManagement.UseCases.Users.Delete;
 using NSubstitute;
@@ -18,12 +19,12 @@ public class DeleteUserHandlerHandle
     public DeleteUserHandlerHandle() => _handler = new DeleteUserHandler(_repository, _mediator);
 
     [Test]
-    public async Task ReturnsSuccessGivenValidId()
+    public async Task DeletesSuccess()
     {
         // Given
         var user = UserFixture.CreateUserDefault();
         _repository
-            .GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .FirstOrDefaultAsync(Arg.Any<UserByIdSpec>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult((User?)user));
 
         // When
@@ -42,11 +43,11 @@ public class DeleteUserHandlerHandle
     }
 
     [Test]
-    public async Task ReturnsNotFoundGivenInvalidId()
+    public async Task DeletesFailByNotFound()
     {
         // Given
         _repository
-            .GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .FirstOrDefaultAsync(Arg.Any<UserByIdSpec>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult((User?)null));
 
         // When

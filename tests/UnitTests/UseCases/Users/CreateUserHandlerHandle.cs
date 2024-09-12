@@ -14,7 +14,7 @@ public class CreateUserHandlerHandle
     public CreateUserHandlerHandle() => _handler = new CreateUserHandler(_repository);
 
     [Test]
-    public async Task ReturnsSuccessGivenValidInput()
+    public async Task CreatesSuccess()
     {
         // Given
         var user = UserFixture.CreateUserDefault();

@@ -1,3 +1,4 @@
+using MiniAssetManagement.Core.DriveAggregate;
 using MiniAssetManagement.UseCases.Drives;
 using MiniAssetManagement.UseCases.Drives.List;
 
@@ -12,7 +13,8 @@ public class ListDrivesQueryService(AppDbContext db) : IListDrivesQueryService
     )
     {
         return ListQuery.ListAsync(
-            db.Drives.Where(d => d.OwnerId == ownerId).Select(d => new DriveDTO(d.Id, d.Name)),
+            db.Drives.Where(d => d.OwnerId == ownerId & d.Status == DriveStatus.Available)
+                .Select(d => new DriveDTO(d.Id, d.Name)),
             skip,
             take
         );

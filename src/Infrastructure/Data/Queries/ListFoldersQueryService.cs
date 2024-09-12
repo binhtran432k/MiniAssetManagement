@@ -1,3 +1,4 @@
+using MiniAssetManagement.Core.FolderAggregate;
 using MiniAssetManagement.UseCases.Folders;
 using MiniAssetManagement.UseCases.Folders.List;
 
@@ -12,7 +13,8 @@ public class ListFoldersQueryService(AppDbContext db) : IListFoldersQueryService
     )
     {
         return ListQuery.ListAsync(
-            db.Folders.Where(d => d.DriveId == driveId).Select(d => new FolderDTO(d.Id, d.Name)),
+            db.Folders.Where(f => f.DriveId == driveId && f.Status == FolderStatus.Available)
+                .Select(f => new FolderDTO(f.Id, f.Name)),
             skip,
             take
         );
@@ -25,7 +27,8 @@ public class ListFoldersQueryService(AppDbContext db) : IListFoldersQueryService
     )
     {
         return ListQuery.ListAsync(
-            db.Folders.Where(d => d.ParentId == folderId).Select(d => new FolderDTO(d.Id, d.Name)),
+            db.Folders.Where(f => f.ParentId == folderId && f.Status == FolderStatus.Available)
+                .Select(f => new FolderDTO(f.Id, f.Name)),
             skip,
             take
         );

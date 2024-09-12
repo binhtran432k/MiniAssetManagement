@@ -16,8 +16,13 @@ public class TestListUsersQueryService : BaseTest
         await repository.AddAsync(new("bar"));
         await repository.AddAsync(new("baz"));
         await repository.AddAsync(new("qux"));
-
         _testCount = 5;
+
+        User deleted = new("deleteduser");
+        deleted.UpdateStatus(UserStatus.Deleted);
+        await repository.AddAsync(deleted);
+
+        await repository.SaveChangesAsync();
     }
 
     [TestCaseSource(nameof(SourceListAsyncSuccess))]
