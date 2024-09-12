@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using MiniAssetManagement.Infrastructure.Data;
 using MiniAssetManagement.Infrastructure.Data.Queries;
 using MiniAssetManagement.UseCases.Drives.List;
-using MiniAssetManagement.UseCases.Folders.GetPermission;
-using MiniAssetManagement.UseCases.Folders.List;
+using MiniAssetManagement.UseCases.Assets.GetPermission;
+using MiniAssetManagement.UseCases.Assets.List;
 using MiniAssetManagement.UseCases.Users.List;
 
 namespace MiniAssetManagement.Infrastructure;
@@ -30,8 +30,8 @@ public static class InfrastructureServiceExtensions
     {
         services.AddScoped<IListUsersQueryService, ListUsersQueryService>();
         services.AddScoped<IListDrivesQueryService, ListDrivesQueryService>();
-        services.AddScoped<IListFoldersQueryService, ListFoldersQueryService>();
-        services.AddScoped<IGetFolderPermissionQueryService, GetFolderPermissionQueryService>();
+        services.AddScoped<IListAssetsQueryService, ListAssetsQueryService>();
+        services.AddScoped<IGetAssetPermissionQueryService, GetAssetPermissionQueryService>();
     }
 
     private static void RegisterEF(IServiceCollection services)

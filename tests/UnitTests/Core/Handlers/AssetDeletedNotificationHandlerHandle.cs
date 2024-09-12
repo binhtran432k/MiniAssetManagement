@@ -3,35 +3,34 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using MiniAssetManagement.Core.AssetAggregate;
 using MiniAssetManagement.Core.AssetAggregate.Events;
+using MiniAssetManagement.Core.AssetAggregate.Handlers;
 using MiniAssetManagement.Core.AssetAggregate.Specifications;
-using MiniAssetManagement.Core.DriveAggregate.Events;
-using MiniAssetManagement.Core.DriveAggregate.Handlers;
 using MiniAssetManagement.UnitTests.Fixtures;
 using NSubstitute;
 
 namespace MiniAssetManagement.UnitTests.Core.Handlers;
 
-public class DriveDeletedNotificationHandlerHandle
+public class AssetDeletedNotificationHandlerHandle
 {
-    private readonly ILogger<DriveDeletedEvent> _logger = Substitute.For<
-        ILogger<DriveDeletedEvent>
+    private readonly ILogger<AssetDeletedEvent> _logger = Substitute.For<
+        ILogger<AssetDeletedEvent>
     >();
     private readonly IMediator _mediator = Substitute.For<IMediator>();
     private readonly IRepository<Asset> _assetRepository = Substitute.For<IRepository<Asset>>();
-    private DriveDeletedNotificationHandler _handler;
+    private AssetDeletedNotificationHandler _handler;
 
-    public DriveDeletedNotificationHandlerHandle() =>
+    public AssetDeletedNotificationHandlerHandle() =>
         _handler = new(_logger, _mediator, _assetRepository);
 
     [Test]
     public async Task DeleteAssetsMatchOwnerId()
     {
         // Given
-        var asset1 = Asset.CreateFolderFromDrive("a", 1);
-        var asset2 = Asset.CreateFolderFromDrive("b", 1);
+        var asset1 = Asset.CreateFolderFromAsset("a", 1);
+        var asset2 = Asset.CreateFolderFromAsset("b", 1);
         List<Asset> assets = new() { asset1, asset2 };
         _assetRepository
-            .ListAsync(Arg.Any<AssetsByDriveIdSpec>(), Arg.Any<CancellationToken>())
+            .ListAsync(Arg.Any<AssetsByParentIdSpec>(), Arg.Any<CancellationToken>())
             .Returns(assets);
 
         // When

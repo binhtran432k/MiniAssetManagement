@@ -1,28 +1,26 @@
 using Ardalis.SharedKernel;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using MiniAssetManagement.Core.DriveAggregate.Events;
-using MiniAssetManagement.Core.AssetAggregate;
 using MiniAssetManagement.Core.AssetAggregate.Events;
 using MiniAssetManagement.Core.AssetAggregate.Specifications;
 
-namespace MiniAssetManagement.Core.DriveAggregate.Handlers;
+namespace MiniAssetManagement.Core.AssetAggregate.Handlers;
 
-public class DriveDeletedNotificationHandler(
-    ILogger<DriveDeletedEvent> logger,
+public class AssetDeletedNotificationHandler(
+    ILogger<AssetDeletedEvent> logger,
     IMediator mediator,
     IRepository<Asset> assetRepository
-) : INotificationHandler<DriveDeletedEvent>
+) : INotificationHandler<AssetDeletedEvent>
 {
-    private readonly ILogger<DriveDeletedEvent> _logger = logger;
+    private readonly ILogger<AssetDeletedEvent> _logger = logger;
     private readonly IMediator _mediator = mediator;
     private readonly IRepository<Asset> _assetRepository = assetRepository;
 
-    public async Task Handle(DriveDeletedEvent domainEvent, CancellationToken cancellationToken)
+    public async Task Handle(AssetDeletedEvent domainEvent, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Deleting assets with drive {driveId}...", domainEvent.DriveId);
+        _logger.LogInformation("Deleting assets with parent {assetId}...", domainEvent.AssetId);
         var assets = await _assetRepository.ListAsync(
-            new AssetsByDriveIdSpec(domainEvent.DriveId),
+            new AssetsByParentIdSpec(domainEvent.AssetId),
             cancellationToken
         );
         foreach (var asset in assets)

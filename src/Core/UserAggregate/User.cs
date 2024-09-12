@@ -1,7 +1,7 @@
 using Ardalis.GuardClauses;
 using Ardalis.SharedKernel;
 using MiniAssetManagement.Core.DriveAggregate;
-using MiniAssetManagement.Core.FolderAggregate;
+using MiniAssetManagement.Core.AssetAggregate;
 
 namespace MiniAssetManagement.Core.UserAggregate;
 
