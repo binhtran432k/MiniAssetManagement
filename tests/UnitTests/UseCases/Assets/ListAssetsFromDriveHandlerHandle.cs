@@ -25,7 +25,7 @@ public class ListAssetsFromDriveHandlerHandle
         _driveRepository
             .CountAsync(Arg.Any<DriveByIdAndOwnerIdSpec>(), Arg.Any<CancellationToken>())
             .Returns(1);
-        List<AssetDTO> drives = [new(1, "foo"), new(2, "bar")];
+        List<AssetDTO> drives = [new(1, "foo", null), new(2, "bar", null)];
         _service
             .ListFromDriveAsync(AssetFixture.DriveIdDefault, Arg.Any<int?>(), Arg.Any<int?>())
             .Returns((drives, 2));
@@ -49,7 +49,7 @@ public class ListAssetsFromDriveHandlerHandle
         _driveRepository
             .CountAsync(Arg.Any<DriveByIdAndOwnerIdSpec>(), Arg.Any<CancellationToken>())
             .Returns(0);
-        List<AssetDTO> drives = [new(1, "foo"), new(2, "bar")];
+        List<AssetDTO> drives = [new(1, "foo", null), new(2, "bar", null)];
         _service
             .ListFromDriveAsync(AssetFixture.DriveIdDefault, Arg.Any<int?>(), Arg.Any<int?>())
             .Returns((drives, 2));

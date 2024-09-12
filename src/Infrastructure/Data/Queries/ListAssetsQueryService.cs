@@ -14,7 +14,7 @@ public class ListAssetsQueryService(AppDbContext db) : IListAssetsQueryService
     {
         return ListQuery.ListAsync(
             db.Assets.Where(f => f.DriveId == driveId && f.Status == AssetStatus.Available)
-                .Select(f => new AssetDTO(f.Id, f.Name)),
+                .Select(f => new AssetDTO(f.Id, f.Name, f.FileType)),
             skip,
             take
         );
@@ -28,7 +28,7 @@ public class ListAssetsQueryService(AppDbContext db) : IListAssetsQueryService
     {
         return ListQuery.ListAsync(
             db.Assets.Where(f => f.ParentId == assetId && f.Status == AssetStatus.Available)
-                .Select(f => new AssetDTO(f.Id, f.Name)),
+                .Select(f => new AssetDTO(f.Id, f.Name, f.FileType)),
             skip,
             take
         );

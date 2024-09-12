@@ -24,6 +24,6 @@ public class GetAssetHandler(
         if (entity is null)
             return Result.NotFound();
 
-        return new AssetDTO(entity.Id, entity.Name);
+        return new AssetDTO(entity.Id, entity.Name, entity.FileType);
     }
 }
