@@ -16,7 +16,7 @@ public class GetUserHandlerHandle
     public GetUserHandlerHandle() => _handler = new GetUserHandler(_repository);
 
     [Test]
-    public async Task ReturnsSuccessGivenValidId()
+    public async Task GetsSuccess()
     {
         // Given
         var user = UserFixture.CreateUserDefault();
@@ -48,7 +48,7 @@ public class GetUserHandlerHandle
     }
 
     [Test]
-    public async Task ReturnsNotFoundGivenInvalidId()
+    public async Task GetsFailByNotFound()
     {
         // Given
         _repository

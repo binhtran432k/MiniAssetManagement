@@ -1,6 +1,7 @@
 using Ardalis.Result;
 using Ardalis.SharedKernel;
 using MiniAssetManagement.Core.UserAggregate;
+using MiniAssetManagement.Core.UserAggregate.Specifications;
 using MiniAssetManagement.UnitTests.Fixtures;
 using MiniAssetManagement.UseCases.Users.Update;
 using NSubstitute;
@@ -15,12 +16,12 @@ public class UpdateUserHandlerHandle
     public UpdateUserHandlerHandle() => _handler = new UpdateUserHandler(_repository);
 
     [Test]
-    public async Task ReturnsSuccessGivenValidId()
+    public async Task UpdatesSuccess()
     {
         // Given
         var user = UserFixture.CreateUserDefault();
         _repository
-            .GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .FirstOrDefaultAsync(Arg.Any<UserByIdSpec>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult((User?)user));
 
         // When
@@ -48,11 +49,11 @@ public class UpdateUserHandlerHandle
     }
 
     [Test]
-    public async Task ReturnsNotFoundGivenInvalidId()
+    public async Task UpdatesFailByNotFound()
     {
         // Given
         _repository
-            .GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .FirstOrDefaultAsync(Arg.Any<UserByIdSpec>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult((User?)null));
 
         // When

@@ -1,6 +1,7 @@
 using Ardalis.Result;
 using Ardalis.SharedKernel;
 using MiniAssetManagement.Core.UserAggregate;
+using MiniAssetManagement.Core.UserAggregate.Specifications;
 
 namespace MiniAssetManagement.UseCases.Users.Update;
 
@@ -12,7 +13,10 @@ public class UpdateUserHandler(IRepository<User> _repository)
         CancellationToken cancellationToken
     )
     {
-        var existingUser = await _repository.GetByIdAsync(request.UserId);
+        var existingUser = await _repository.FirstOrDefaultAsync(
+            new UserByIdSpec(request.UserId),
+            cancellationToken
+        );
         if (existingUser is null)
             return Result.NotFound();
 
