@@ -6,7 +6,8 @@ namespace MiniAssetManagement.IntegrationTests.Data.Queries;
 
 public class TestListDrivesQueryService : BaseTest
 {
-    private int _testUserId = default;
+    private int _testUserId;
+    private int _testCount;
 
     [SetUp]
     public async Task SetUpData()
@@ -20,6 +21,10 @@ public class TestListDrivesQueryService : BaseTest
         await repository.AddAsync(new("bar", _testUserId));
         await repository.AddAsync(new("baz", _testUserId));
         await repository.AddAsync(new("qux", _testUserId));
+
+        await repository.SaveChangesAsync();
+
+        _testCount = 5;
     }
 
     [TestCaseSource(nameof(SourceListAsyncSuccess))]
@@ -29,10 +34,11 @@ public class TestListDrivesQueryService : BaseTest
         ListDrivesQueryService service = new(DbContext);
 
         // When
-        var drives = await service.ListAsync(_testUserId, props.Skip, props.Take);
+        var (drives, count) = await service.ListAsync(_testUserId, props.Skip, props.Take);
 
         // Then
         Assert.That(drives.Select(d => d.Name), Is.EquivalentTo(props.Expected), nameof(drives));
+        Assert.That(count, Is.EqualTo(_testCount), nameof(count));
     }
 
     [Test]
@@ -42,10 +48,11 @@ public class TestListDrivesQueryService : BaseTest
         ListDrivesQueryService service = new(DbContext);
 
         // When
-        var drives = await service.ListAsync(0);
+        var (drives, count) = await service.ListAsync(0);
 
         // Then
         Assert.That(drives, Is.Empty, nameof(drives));
+        Assert.That(count, Is.EqualTo(0), nameof(count));
     }
 
     public static IEnumerable<(int?, int?, IEnumerable<string>)> SourceListAsyncSuccess()

@@ -4,13 +4,13 @@ namespace MiniAssetManagement.Infrastructure.Data.Queries;
 
 public static class ListQuery
 {
-    public static async Task<IEnumerable<T>> ListAsync<T>(
-        AppDbContext db,
+    public static async Task<(IEnumerable<T>, int)> ListAsync<T>(
         IQueryable<T> query,
         int? skip = null,
         int? take = null
     )
     {
+        int count = query.Count();
         if (skip is not null)
             query = query.Skip((int)skip);
         if (take is not null)
@@ -18,6 +18,6 @@ public static class ListQuery
 
         var result = await query.ToListAsync();
 
-        return result;
+        return (result, count);
     }
 }

@@ -1,5 +1,4 @@
 using Ardalis.Result;
-
 using MiniAssetManagement.Core.FolderAggregate;
 using MiniAssetManagement.UnitTests.Fixtures;
 using MiniAssetManagement.UseCases.Folders;
@@ -31,7 +30,7 @@ public class ListFoldersFromFolderHandlerHandle
         List<FolderDTO> drives = [new(1, "foo"), new(2, "bar")];
         _service
             .ListFromFolderAsync(FolderFixture.ParentIdDefault, Arg.Any<int?>(), Arg.Any<int?>())
-            .Returns(drives);
+            .Returns((drives, 2));
 
         // When
         var result = await _handler.Handle(
@@ -41,7 +40,8 @@ public class ListFoldersFromFolderHandlerHandle
 
         // Then
         Assert.That(result.IsSuccess, Is.True, nameof(result.IsSuccess));
-        Assert.That(result.Value, Is.EquivalentTo(drives), nameof(result.Value));
+        Assert.That(result.Value.Item1, Is.EquivalentTo(drives), nameof(result.Value.Item1));
+        Assert.That(result.Value.Item2, Is.EqualTo(2), nameof(result.Value.Item2));
     }
 
     [Test]
@@ -52,7 +52,7 @@ public class ListFoldersFromFolderHandlerHandle
         List<FolderDTO> drives = [new(1, "foo"), new(2, "bar")];
         _service
             .ListFromFolderAsync(FolderFixture.ParentIdDefault, Arg.Any<int?>(), Arg.Any<int?>())
-            .Returns(drives);
+            .Returns((drives, 2));
 
         // When
         var result = await _handler.Handle(

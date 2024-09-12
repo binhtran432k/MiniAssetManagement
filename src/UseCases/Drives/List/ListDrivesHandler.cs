@@ -4,9 +4,9 @@ using Ardalis.SharedKernel;
 namespace MiniAssetManagement.UseCases.Drives.List;
 
 public class ListDrivesHandler(IListDrivesQueryService _query)
-    : IQueryHandler<ListDrivesQuery, Result<IEnumerable<DriveDTO>>>
+    : IQueryHandler<ListDrivesQuery, Result<(IEnumerable<DriveDTO>, int)>>
 {
-    public async Task<Result<IEnumerable<DriveDTO>>> Handle(
+    public async Task<Result<(IEnumerable<DriveDTO>, int)>> Handle(
         ListDrivesQuery request,
         CancellationToken cancellationToken
     )

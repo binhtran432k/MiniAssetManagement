@@ -19,7 +19,7 @@ public class ListFoldersFromDriveHandlerHandle
         _handler = new ListFoldersFromDriveHandler(_driveRepository, _service);
 
     [Test]
-    public async Task ReturnsFoldersSuccess()
+    public async Task ListsFoldersSuccess()
     {
         // Given
         _driveRepository
@@ -28,7 +28,7 @@ public class ListFoldersFromDriveHandlerHandle
         List<FolderDTO> drives = [new(1, "foo"), new(2, "bar")];
         _service
             .ListFromDriveAsync(FolderFixture.DriveIdDefault, Arg.Any<int?>(), Arg.Any<int?>())
-            .Returns(drives);
+            .Returns((drives, 2));
 
         // When
         var result = await _handler.Handle(
@@ -38,11 +38,12 @@ public class ListFoldersFromDriveHandlerHandle
 
         // Then
         Assert.That(result.IsSuccess, Is.True, nameof(result.IsSuccess));
-        Assert.That(result.Value, Is.EquivalentTo(drives), nameof(result.Value));
+        Assert.That(result.Value.Item1, Is.EquivalentTo(drives), nameof(result.Value.Item1));
+        Assert.That(result.Value.Item2, Is.EqualTo(2), nameof(result.Value.Item2));
     }
 
     [Test]
-    public async Task ReturnsFoldersFailByUnauthorized()
+    public async Task ListsFoldersFailByUnauthorized()
     {
         // Given
         _driveRepository
@@ -51,7 +52,7 @@ public class ListFoldersFromDriveHandlerHandle
         List<FolderDTO> drives = [new(1, "foo"), new(2, "bar")];
         _service
             .ListFromDriveAsync(FolderFixture.DriveIdDefault, Arg.Any<int?>(), Arg.Any<int?>())
-            .Returns(drives);
+            .Returns((drives, 2));
 
         // When
         var result = await _handler.Handle(

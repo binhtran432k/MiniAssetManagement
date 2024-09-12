@@ -13,32 +13,13 @@ public class ListDrivesHandlerHandle
     public ListDrivesHandlerHandle() => _handler = new ListDrivesHandler(_service);
 
     [Test]
-    public async Task ReturnsEmptyWhenEmpty()
-    {
-        // Given
-        _service
-            .ListAsync(DriveFixture.OwnerIdDefault, Arg.Any<int?>(), Arg.Any<int?>())
-            .Returns([]);
-
-        // When
-        var result = await _handler.Handle(
-            new ListDrivesQuery(DriveFixture.OwnerIdDefault),
-            CancellationToken.None
-        );
-
-        // Then
-        Assert.That(result.IsSuccess, Is.True, nameof(result.IsSuccess));
-        Assert.That(result.Value, Is.Empty, nameof(result.Value));
-    }
-
-    [Test]
-    public async Task ReturnsDrivesWhenNotEmpty()
+    public async Task ListsDrivesSuccess()
     {
         // Given
         List<DriveDTO> drives = [new(1, "foo"), new(2, "bar")];
         _service
             .ListAsync(DriveFixture.OwnerIdDefault, Arg.Any<int?>(), Arg.Any<int?>())
-            .Returns(drives);
+            .Returns((drives, 2));
 
         // When
         var result = await _handler.Handle(
@@ -48,6 +29,7 @@ public class ListDrivesHandlerHandle
 
         // Then
         Assert.That(result.IsSuccess, Is.True, nameof(result.IsSuccess));
-        Assert.That(result.Value, Is.EquivalentTo(drives), nameof(result.Value));
+        Assert.That(result.Value.Item1, Is.EquivalentTo(drives), nameof(result.Value.Item1));
+        Assert.That(result.Value.Item2, Is.EqualTo(2), nameof(result.Value.Item2));
     }
 }

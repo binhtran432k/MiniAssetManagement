@@ -5,6 +5,8 @@ namespace MiniAssetManagement.IntegrationTests.Data.Queries;
 
 public class TestListUsersQueryService : BaseTest
 {
+    private int _testCount;
+
     [SetUp]
     public async Task SetUpUser()
     {
@@ -14,6 +16,8 @@ public class TestListUsersQueryService : BaseTest
         await repository.AddAsync(new("bar"));
         await repository.AddAsync(new("baz"));
         await repository.AddAsync(new("qux"));
+
+        _testCount = 5;
     }
 
     [TestCaseSource(nameof(SourceListAsyncSuccess))]
@@ -23,10 +27,11 @@ public class TestListUsersQueryService : BaseTest
         ListUsersQueryService service = new(DbContext);
 
         // When
-        var users = await service.ListAsync(props.Skip, props.Take);
+        var (users, count) = await service.ListAsync(props.Skip, props.Take);
 
         // Then
         Assert.That(users.Select(u => u.Username), Is.EquivalentTo(props.Expected), nameof(users));
+        Assert.That(count, Is.EqualTo(_testCount), nameof(count));
     }
 
     public static IEnumerable<(int?, int?, IEnumerable<string>)> SourceListAsyncSuccess()
