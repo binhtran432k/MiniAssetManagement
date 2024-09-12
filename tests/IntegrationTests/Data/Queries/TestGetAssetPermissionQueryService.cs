@@ -25,12 +25,12 @@ public class TestGetAssetPermissionQueryService : BaseTest
         _testDriveId = (await driveRepository.AddAsync(new("testdrive", _testUserId1))).Id;
 
         var assetRepository = GetRepository<Asset>();
-        var asset = Asset.CreateFromDrive("testasset", _testDriveId);
+        var asset = Asset.CreateFolderFromDrive("testasset", _testDriveId);
         asset.AddOrUpdatePermission(_testUserId1, _testPermission);
         _testAssetId = (await assetRepository.AddAsync(asset)).Id;
 
         _testSubAssetId = (
-            await assetRepository.AddAsync(Asset.CreateFromAsset("subasset", _testAssetId))
+            await assetRepository.AddAsync(Asset.CreateFolderFromAsset("subasset", _testAssetId))
         ).Id;
     }
 

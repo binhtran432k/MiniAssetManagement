@@ -9,7 +9,7 @@ public class Asset_UpdateStatus
     public void UpdatesStatus()
     {
         // Given
-        Asset asset = Asset.CreateFromDrive(AssetFixture.NameDefault, 1);
+        Asset asset = Asset.CreateFolderFromDrive(AssetFixture.NameDefault, 1);
 
         // When
         asset.UpdateStatus(AssetStatus.Deleted);

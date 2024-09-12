@@ -9,7 +9,10 @@ public class Asset_RemoveAssetPermissionByUserId
     public void RemovesPermissionSuccess()
     {
         // Given
-        Asset asset = Asset.CreateFromDrive(AssetFixture.NameDefault, AssetFixture.DriveIdDefault);
+        Asset asset = Asset.CreateFolderFromDrive(
+            AssetFixture.NameDefault,
+            AssetFixture.DriveIdDefault
+        );
         asset.AddOrUpdatePermission(UserFixture.IdDefault, PermissionType.Admin);
 
         // When

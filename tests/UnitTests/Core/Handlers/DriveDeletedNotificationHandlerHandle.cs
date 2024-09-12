@@ -1,11 +1,11 @@
 using Ardalis.SharedKernel;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using MiniAssetManagement.Core.DriveAggregate.Events;
-using MiniAssetManagement.Core.DriveAggregate.Handlers;
 using MiniAssetManagement.Core.AssetAggregate;
 using MiniAssetManagement.Core.AssetAggregate.Events;
 using MiniAssetManagement.Core.AssetAggregate.Specifications;
+using MiniAssetManagement.Core.DriveAggregate.Events;
+using MiniAssetManagement.Core.DriveAggregate.Handlers;
 using MiniAssetManagement.UnitTests.Fixtures;
 using NSubstitute;
 
@@ -27,8 +27,8 @@ public class DriveDeletedNotificationHandlerHandle
     public async Task DeleteAssetsMatchOwnerId()
     {
         // Given
-        var asset1 = Asset.CreateFromDrive("a", 1);
-        var asset2 = Asset.CreateFromDrive("b", 1);
+        var asset1 = Asset.CreateFolderFromDrive("a", 1);
+        var asset2 = Asset.CreateFolderFromDrive("b", 1);
         List<Asset> assets = new() { asset1, asset2 };
         _assetRepository
             .ListAsync(Arg.Any<AssetsByDriveIdSpec>(), Arg.Any<CancellationToken>())

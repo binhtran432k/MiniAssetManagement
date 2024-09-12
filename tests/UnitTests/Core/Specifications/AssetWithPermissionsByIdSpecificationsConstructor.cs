@@ -10,9 +10,9 @@ public class AssetWithPermissionsByIdSpecificationsConstructor
     public void FiltersSuccess()
     {
         // Given
-        var folder1 = AssetFixture.CreateAssetFromDrive(1, "a", 1);
-        var folder2 = AssetFixture.CreateAssetFromDrive(2, "b", 1);
-        var folder3 = AssetFixture.CreateAssetFromDrive(3, "c", 1);
+        var folder1 = AssetFixture.CreateFolderFromDrive(1, "a", 1);
+        var folder2 = AssetFixture.CreateFolderFromDrive(2, "b", 1);
+        var folder3 = AssetFixture.CreateFolderFromDrive(3, "c", 1);
         List<Asset> folders = new() { folder1, folder2, folder3 };
 
         // When
@@ -31,9 +31,9 @@ public class AssetWithPermissionsByIdSpecificationsConstructor
     public void FiltersEmptyByInvalidId()
     {
         // Given
-        var folder1 = AssetFixture.CreateAssetFromDrive(1, "a", 1);
-        var folder2 = AssetFixture.CreateAssetFromDrive(2, "b", 1);
-        var folder3 = AssetFixture.CreateAssetFromDrive(3, "c", 1);
+        var folder1 = AssetFixture.CreateFolderFromDrive(1, "a", 1);
+        var folder2 = AssetFixture.CreateFolderFromDrive(2, "b", 1);
+        var folder3 = AssetFixture.CreateFolderFromDrive(3, "c", 1);
         List<Asset> folders = new() { folder1, folder2, folder3 };
 
         // When
@@ -48,9 +48,9 @@ public class AssetWithPermissionsByIdSpecificationsConstructor
     public void FiltersEmptyByDeletedId()
     {
         // Given
-        var folder1 = AssetFixture.CreateAssetFromDrive(1, "a", 1);
-        var folder2 = AssetFixture.CreateAssetFromDrive(2, "b", 1, AssetStatus.Deleted);
-        var folder3 = AssetFixture.CreateAssetFromDrive(3, "c", 1);
+        var folder1 = AssetFixture.CreateFolderFromDrive(1, "a", 1);
+        var folder2 = AssetFixture.CreateFolderFromDrive(2, "b", 1, AssetStatus.Deleted);
+        var folder3 = AssetFixture.CreateFolderFromDrive(3, "c", 1);
         List<Asset> folders = new() { folder1, folder2, folder3 };
 
         // When

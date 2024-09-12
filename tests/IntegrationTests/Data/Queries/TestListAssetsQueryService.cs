@@ -1,5 +1,5 @@
-using MiniAssetManagement.Core.DriveAggregate;
 using MiniAssetManagement.Core.AssetAggregate;
+using MiniAssetManagement.Core.DriveAggregate;
 using MiniAssetManagement.Core.UserAggregate;
 using MiniAssetManagement.Infrastructure.Data.Queries;
 
@@ -24,27 +24,27 @@ public class TestListAssetsQueryService : BaseTest
 
         var repository = GetRepository<Asset>();
         _testAssetId = (
-            await repository.AddAsync(Asset.CreateFromDrive("foobar", _testDriveId))
+            await repository.AddAsync(Asset.CreateFolderFromDrive("foobar", _testDriveId))
         ).Id;
 
-        await repository.AddAsync(Asset.CreateFromDrive("foo", _testDriveId));
-        await repository.AddAsync(Asset.CreateFromDrive("bar", _testDriveId));
-        await repository.AddAsync(Asset.CreateFromDrive("baz", _testDriveId));
-        await repository.AddAsync(Asset.CreateFromDrive("qux", _testDriveId));
+        await repository.AddAsync(Asset.CreateFolderFromDrive("foo", _testDriveId));
+        await repository.AddAsync(Asset.CreateFolderFromDrive("bar", _testDriveId));
+        await repository.AddAsync(Asset.CreateFolderFromDrive("baz", _testDriveId));
+        await repository.AddAsync(Asset.CreateFolderFromDrive("qux", _testDriveId));
         _testFromDriveCount = 5;
 
-        var deletedFromDrive = Asset.CreateFromDrive("deletedasset", _testDriveId);
+        var deletedFromDrive = Asset.CreateFolderFromDrive("deletedasset", _testDriveId);
         deletedFromDrive.UpdateStatus(AssetStatus.Deleted);
         await repository.AddAsync(deletedFromDrive);
 
-        await repository.AddAsync(Asset.CreateFromAsset("foobar2", _testAssetId));
-        await repository.AddAsync(Asset.CreateFromAsset("foo2", _testAssetId));
-        await repository.AddAsync(Asset.CreateFromAsset("bar2", _testAssetId));
-        await repository.AddAsync(Asset.CreateFromAsset("baz2", _testAssetId));
-        await repository.AddAsync(Asset.CreateFromAsset("qux2", _testAssetId));
+        await repository.AddAsync(Asset.CreateFolderFromAsset("foobar2", _testAssetId));
+        await repository.AddAsync(Asset.CreateFolderFromAsset("foo2", _testAssetId));
+        await repository.AddAsync(Asset.CreateFolderFromAsset("bar2", _testAssetId));
+        await repository.AddAsync(Asset.CreateFolderFromAsset("baz2", _testAssetId));
+        await repository.AddAsync(Asset.CreateFolderFromAsset("qux2", _testAssetId));
         _testFromAssetCount = 5;
 
-        var deletedFromAsset = Asset.CreateFromAsset("deletedasset2", _testAssetId);
+        var deletedFromAsset = Asset.CreateFolderFromAsset("deletedasset2", _testAssetId);
         deletedFromAsset.UpdateStatus(AssetStatus.Deleted);
         await repository.AddAsync(deletedFromAsset);
 

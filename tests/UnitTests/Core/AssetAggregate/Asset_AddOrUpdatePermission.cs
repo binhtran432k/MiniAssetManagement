@@ -9,7 +9,7 @@ public class Asset_AddOrUpdateAssetPermission
     public void AddsPermissionSuccess()
     {
         // Given
-        Asset asset = Asset.CreateFromDrive(AssetFixture.NameDefault, AssetFixture.DriveIdDefault);
+        Asset asset = Asset.CreateFolderFromDrive(AssetFixture.NameDefault, AssetFixture.DriveIdDefault);
         asset.Id = AssetFixture.IdDefault;
 
         // When
@@ -32,7 +32,7 @@ public class Asset_AddOrUpdateAssetPermission
     public void UpdatesPermissionSuccess()
     {
         // Given
-        var asset = AssetFixture.CreateAssetDefaultFromDrive();
+        var asset = AssetFixture.CreateFolderDefaultFromDrive();
         var testPermission = PermissionType.Contributor;
 
         // When

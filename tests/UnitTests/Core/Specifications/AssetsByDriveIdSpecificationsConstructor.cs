@@ -10,9 +10,9 @@ public class AssetsByDriveIdSpecificationsConstructor
     public void FilterCollectionToOnlyReturnItemsWithValidDriveId()
     {
         // Given
-        var asset1 = AssetFixture.CreateAssetFromDrive(1, "a", 1);
-        var asset2 = AssetFixture.CreateAssetFromDrive(2, "b", 2);
-        var asset3 = AssetFixture.CreateAssetFromDrive(3, "c", 1);
+        var asset1 = AssetFixture.CreateFolderFromDrive(1, "a", 1);
+        var asset2 = AssetFixture.CreateFolderFromDrive(2, "b", 2);
+        var asset3 = AssetFixture.CreateFolderFromDrive(3, "c", 1);
         List<Asset> assets = new() { asset1, asset2, asset3 };
 
         // When
@@ -31,9 +31,9 @@ public class AssetsByDriveIdSpecificationsConstructor
     public void FilterCollectionToReturnEmptyWithInvalidDriveId()
     {
         // Given
-        var asset1 = AssetFixture.CreateAssetFromDrive(1, "a", 1);
-        var asset2 = AssetFixture.CreateAssetFromDrive(2, "b", 1);
-        var asset3 = AssetFixture.CreateAssetFromDrive(3, "c", 1);
+        var asset1 = AssetFixture.CreateFolderFromDrive(1, "a", 1);
+        var asset2 = AssetFixture.CreateFolderFromDrive(2, "b", 1);
+        var asset3 = AssetFixture.CreateFolderFromDrive(3, "c", 1);
         List<Asset> assets = new() { asset1, asset2, asset3 };
 
         // When

@@ -9,16 +9,23 @@ public class AssetConfiguration : IEntityTypeConfiguration<Asset>
     public void Configure(EntityTypeBuilder<Asset> builder)
     {
         builder
-            .Property(f => f.Name)
+            .Property(a => a.Name)
             .HasMaxLength(DataSchemaConstants.DEFAULT_NAME_LENGTH)
             .IsRequired();
 
-        builder.HasOne(f => f.Drive).WithMany(d => d.Assets).HasForeignKey(f => f.DriveId);
+        builder.HasOne(a => a.Drive).WithMany(d => d.Assets).HasForeignKey(f => f.DriveId);
 
-        builder.HasOne(f => f.Parent).WithMany(p => p.Children).HasForeignKey(f => f.ParentId);
+        builder.HasOne(a => a.Parent).WithMany(p => p.Children).HasForeignKey(f => f.ParentId);
 
-        builder.HasMany(f => f.Permissions).WithOne(p => p.Asset).HasForeignKey(p => p.AssetId);
+        builder.HasMany(a => a.Permissions).WithOne(p => p.Asset).HasForeignKey(p => p.AssetId);
 
-        builder.Property(f => f.Status).HasConversion(s => s.Value, s => AssetStatus.FromValue(s));
+        builder.Property(a => a.Status).HasConversion(s => s.Value, s => AssetStatus.FromValue(s));
+
+        builder
+            .Property(a => a.FileType)
+            .HasConversion(
+                t => t == null ? (int?)null : t.Value,
+                t => t == null ? null : FileType.FromValue((int)t)
+            );
     }
 }

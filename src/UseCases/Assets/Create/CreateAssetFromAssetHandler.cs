@@ -5,24 +5,50 @@ using MiniAssetManagement.UseCases.Assets.GetPermission;
 
 namespace MiniAssetManagement.UseCases.Assets.Create;
 
-public class CreateAssetFromAssetHandler(
-    IRepository<Asset> _repository,
-    IGetAssetPermissionQueryService _permissionQuery
-) : ICommandHandler<CreateAssetFromAssetCommand, Result<int>>
+public class CreateFolderFromAssetHandler(
+    IRepository<Asset> repository,
+    IGetAssetPermissionQueryService permissionQuery
+) : ICommandHandler<CreateFolderFromAssetCommand, Result<int>>
 {
-    public async Task<Result<int>> Handle(
-        CreateAssetFromAssetCommand request,
+    public Task<Result<int>> Handle(
+        CreateFolderFromAssetCommand request,
         CancellationToken cancellationToken
     )
     {
-        var permission = await _permissionQuery.GetAsync(request.AssetId, request.AdminId);
-        if (permission != PermissionType.Admin && permission != PermissionType.Contributor)
-            return Result.Unauthorized();
-
-        var newAsset = Asset.CreateFromAsset(request.Name, request.AssetId);
-        newAsset.AddOrUpdatePermission(request.AdminId, PermissionType.Admin);
-        var createdItem = await _repository.AddAsync(newAsset, cancellationToken);
-
-        return createdItem.Id;
+        return CreateAssetUtils.CreateFromAssetAsync(
+            repository,
+            permissionQuery,
+            () => Asset.CreateFolderFromAsset(request.Name, request.AssetId),
+            assetId: request.AssetId,
+            adminId: request.AdminId,
+            cancellationToken
+        );
     }
 }
+
+public class CreateFileFromAssetHandler(
+    IRepository<Asset> repository,
+    IGetAssetPermissionQueryService permissionQuery
+) : ICommandHandler<CreateFileFromAssetCommand, Result<int>>
+{
+    public Task<Result<int>> Handle(
+        CreateFileFromAssetCommand request,
+        CancellationToken cancellationToken
+    )
+    {
+        return CreateAssetUtils.CreateFromAssetAsync(
+            repository,
+            permissionQuery,
+            () => Asset.CreateFileFromAsset(request.Name, request.AssetId, request.Type),
+            assetId: request.AssetId,
+            adminId: request.AdminId,
+            cancellationToken
+        );
+    }
+}
+
+public record CreateFolderFromAssetCommand(string Name, int AdminId, int AssetId)
+    : ICommand<Result<int>>;
+
+public record CreateFileFromAssetCommand(string Name, int AdminId, int AssetId, FileType Type)
+    : ICommand<Result<int>>;

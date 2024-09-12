@@ -24,7 +24,7 @@ public class RemoveAssetPermissionHandlerHandle
     {
         // Given
         _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(PermissionType.Admin);
-        var asset = AssetFixture.CreateAssetDefaultFromDrive();
+        var asset = AssetFixture.CreateFolderDefaultFromDrive();
         asset.AddOrUpdatePermission(UserFixture.IdAlternative, PermissionType.Reader);
         _repository
             .FirstOrDefaultAsync(

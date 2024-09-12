@@ -9,6 +9,7 @@ public class Asset : EntityBase, IAggregateRoot
     public int? DriveId { get; private set; }
     public int? ParentId { get; private set; }
     public string Name { get; private set; }
+    public FileType? FileType { get; private set; }
     public AssetStatus Status { get; private set; } = AssetStatus.Available;
 
     public Drive? Drive { get; set; }
@@ -21,11 +22,17 @@ public class Asset : EntityBase, IAggregateRoot
 
     private Asset(string name) => Name = Guard.Against.NullOrEmpty(name, nameof(name));
 
-    public static Asset CreateFromDrive(string name, int driveId) =>
-        new(name) { DriveId = driveId };
+    public static Asset CreateFolderFromDrive(string name, int driveId) =>
+        new(name) { DriveId = driveId, FileType = null };
 
-    public static Asset CreateFromAsset(string name, int assetId) =>
-        new(name) { ParentId = assetId };
+    public static Asset CreateFolderFromAsset(string name, int assetId) =>
+        new(name) { ParentId = assetId, FileType = null };
+
+    public static Asset CreateFileFromDrive(string name, int driveId, FileType type) =>
+        new(name) { DriveId = driveId, FileType = type };
+
+    public static Asset CreateFileFromAsset(string name, int assetId, FileType type) =>
+        new(name) { ParentId = assetId, FileType = type };
 
     public void UpdateName(string newName) =>
         Name = Guard.Against.NullOrEmpty(newName, nameof(newName));

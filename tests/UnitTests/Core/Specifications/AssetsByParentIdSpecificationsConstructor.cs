@@ -10,9 +10,9 @@ public class AssetsByParentIdSpecificationsConstructor
     public void FilterCollectionToOnlyReturnItemsWithValidParentId()
     {
         // Given
-        var asset1 = AssetFixture.CreateAssetFromAsset(1, "a", 1);
-        var asset2 = AssetFixture.CreateAssetFromAsset(2, "b", 2);
-        var asset3 = AssetFixture.CreateAssetFromAsset(3, "c", 1);
+        var asset1 = AssetFixture.CreateFolderFromAsset(1, "a", 1);
+        var asset2 = AssetFixture.CreateFolderFromAsset(2, "b", 2);
+        var asset3 = AssetFixture.CreateFolderFromAsset(3, "c", 1);
         List<Asset> assets = new() { asset1, asset2, asset3 };
 
         // When
@@ -31,9 +31,9 @@ public class AssetsByParentIdSpecificationsConstructor
     public void FilterCollectionToReturnEmptyWithInvalidParentId()
     {
         // Given
-        var asset1 = AssetFixture.CreateAssetFromAsset(1, "a", 1);
-        var asset2 = AssetFixture.CreateAssetFromAsset(2, "b", 1);
-        var asset3 = AssetFixture.CreateAssetFromAsset(3, "c", 1);
+        var asset1 = AssetFixture.CreateFolderFromAsset(1, "a", 1);
+        var asset2 = AssetFixture.CreateFolderFromAsset(2, "b", 1);
+        var asset3 = AssetFixture.CreateFolderFromAsset(3, "c", 1);
         List<Asset> assets = new() { asset1, asset2, asset3 };
 
         // When

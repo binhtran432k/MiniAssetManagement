@@ -2,31 +2,53 @@ using Ardalis.Result;
 using Ardalis.SharedKernel;
 using MiniAssetManagement.Core.AssetAggregate;
 using MiniAssetManagement.Core.DriveAggregate;
-using MiniAssetManagement.Core.DriveAggregate.Specifications;
 
 namespace MiniAssetManagement.UseCases.Assets.Create;
 
-public class CreateAssetFromDriveHandler(
-    IRepository<Asset> _repository,
-    IRepository<Drive> _driveRepository
-) : ICommandHandler<CreateAssetFromDriveCommand, Result<int>>
+public class CreateFolderFromDriveHandler(
+    IRepository<Asset> repository,
+    IRepository<Drive> driveRepository
+) : ICommandHandler<CreateFolderFromDriveCommand, Result<int>>
 {
-    public async Task<Result<int>> Handle(
-        CreateAssetFromDriveCommand request,
+    public Task<Result<int>> Handle(
+        CreateFolderFromDriveCommand request,
         CancellationToken cancellationToken
     )
     {
-        bool hasPermission =
-            await _driveRepository.CountAsync(
-                new DriveByIdAndOwnerIdSpec(request.DriveId, request.AdminId)
-            ) > 0;
-        if (!hasPermission)
-            return Result.Unauthorized();
-
-        var newAsset = Asset.CreateFromDrive(request.Name, request.DriveId);
-        newAsset.AddOrUpdatePermission(request.AdminId, PermissionType.Admin);
-        var createdItem = await _repository.AddAsync(newAsset, cancellationToken);
-
-        return createdItem.Id;
+        return CreateAssetUtils.CreateFromDriveAsync(
+            repository,
+            driveRepository,
+            () => Asset.CreateFolderFromDrive(request.Name, request.DriveId),
+            driveId: request.DriveId,
+            adminId: request.AdminId,
+            cancellationToken
+        );
     }
 }
+
+public class CreateFileFromDriveHandler(
+    IRepository<Asset> repository,
+    IRepository<Drive> driveRepository
+) : ICommandHandler<CreateFileFromDriveCommand, Result<int>>
+{
+    public Task<Result<int>> Handle(
+        CreateFileFromDriveCommand request,
+        CancellationToken cancellationToken
+    )
+    {
+        return CreateAssetUtils.CreateFromDriveAsync(
+            repository,
+            driveRepository,
+            () => Asset.CreateFileFromDrive(request.Name, request.DriveId, request.Type),
+            driveId: request.DriveId,
+            adminId: request.AdminId,
+            cancellationToken
+        );
+    }
+}
+
+public record CreateFolderFromDriveCommand(string Name, int AdminId, int DriveId)
+    : ICommand<Result<int>>;
+
+public record CreateFileFromDriveCommand(string Name, int AdminId, int DriveId, FileType Type)
+    : ICommand<Result<int>>;

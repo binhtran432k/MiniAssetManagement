@@ -26,8 +26,8 @@ public class AssetDeletedNotificationHandlerHandle
     public async Task DeleteAssetsMatchOwnerId()
     {
         // Given
-        var asset1 = Asset.CreateFromAsset("a", 1);
-        var asset2 = Asset.CreateFromAsset("b", 1);
+        var asset1 = Asset.CreateFolderFromAsset("a", 1);
+        var asset2 = Asset.CreateFolderFromAsset("b", 1);
         List<Asset> assets = new() { asset1, asset2 };
         _assetRepository
             .ListAsync(Arg.Any<AssetsByParentIdSpec>(), Arg.Any<CancellationToken>())

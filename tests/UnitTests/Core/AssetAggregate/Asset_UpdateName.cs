@@ -9,7 +9,7 @@ public class Asset_UpdateName
     public void UpdatesName()
     {
         // Given
-        var asset = Asset.CreateFromDrive(AssetFixture.NameDefault, 1);
+        var asset = Asset.CreateFolderFromDrive(AssetFixture.NameDefault, 1);
 
         // When
         asset.UpdateName(AssetFixture.NameNew);
@@ -21,7 +21,7 @@ public class Asset_UpdateName
     [Test]
     public void ThrowsExceptionGivenNullOrEmptyName()
     {
-        var asset = Asset.CreateFromDrive(AssetFixture.NameDefault, 1);
+        var asset = Asset.CreateFolderFromDrive(AssetFixture.NameDefault, 1);
 
         Assert.Throws<ArgumentNullException>(() => asset.UpdateName(null!), nameof(asset));
         Assert.Throws<ArgumentException>(() => asset.UpdateName(""), nameof(asset));

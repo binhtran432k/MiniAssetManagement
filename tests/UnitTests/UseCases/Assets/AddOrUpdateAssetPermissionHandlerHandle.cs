@@ -25,7 +25,7 @@ public class AddOrUpdateAssetPermissionHandlerHandle
     {
         // Given
         _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(PermissionType.Admin);
-        var asset = AssetFixture.CreateAssetDefaultFromDrive();
+        var asset = AssetFixture.CreateFolderDefaultFromDrive();
         _repository
             .FirstOrDefaultAsync(
                 Arg.Any<AssetWithPermissionsByIdSpec>(),

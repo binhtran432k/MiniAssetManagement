@@ -27,7 +27,7 @@ public class UpdateAssetHandlerHandle
         _permissionService
             .GetAsync(Arg.Any<int>(), Arg.Any<int>())
             .Returns(PermissionType.FromName(adminPermissionName));
-        var asset = AssetFixture.CreateAssetDefaultFromDrive();
+        var asset = AssetFixture.CreateFolderDefaultFromDrive();
         _repository
             .FirstOrDefaultAsync(Arg.Any<AssetByIdSpec>(), Arg.Any<CancellationToken>())
             .Returns(asset);
