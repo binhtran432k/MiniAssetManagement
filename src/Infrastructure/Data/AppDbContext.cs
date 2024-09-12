@@ -2,7 +2,7 @@ using System.Reflection;
 using Ardalis.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using MiniAssetManagement.Core.DriveAggregate;
-using MiniAssetManagement.Core.FolderAggregate;
+using MiniAssetManagement.Core.AssetAggregate;
 using MiniAssetManagement.Core.UserAggregate;
 
 namespace MiniAssetManagement.Infrastructure.Data;
@@ -14,7 +14,7 @@ public class AppDbContext(
 {
     public DbSet<User> Users => Set<User>();
     public DbSet<Drive> Drives => Set<Drive>();
-    public DbSet<Folder> Folders => Set<Folder>();
+    public DbSet<Asset> Assets => Set<Asset>();
     public DbSet<Permission> Permissions => Set<Permission>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

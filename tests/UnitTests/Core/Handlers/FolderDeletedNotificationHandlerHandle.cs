@@ -1,52 +1,52 @@
 using Ardalis.SharedKernel;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using MiniAssetManagement.Core.FolderAggregate;
-using MiniAssetManagement.Core.FolderAggregate.Events;
-using MiniAssetManagement.Core.FolderAggregate.Handlers;
-using MiniAssetManagement.Core.FolderAggregate.Specifications;
+using MiniAssetManagement.Core.AssetAggregate;
+using MiniAssetManagement.Core.AssetAggregate.Events;
+using MiniAssetManagement.Core.AssetAggregate.Handlers;
+using MiniAssetManagement.Core.AssetAggregate.Specifications;
 using MiniAssetManagement.UnitTests.Fixtures;
 using NSubstitute;
 
 namespace MiniAssetManagement.UnitTests.Core.Handlers;
 
-public class FolderDeletedNotificationHandlerHandle
+public class AssetDeletedNotificationHandlerHandle
 {
-    private readonly ILogger<FolderDeletedEvent> _logger = Substitute.For<
-        ILogger<FolderDeletedEvent>
+    private readonly ILogger<AssetDeletedEvent> _logger = Substitute.For<
+        ILogger<AssetDeletedEvent>
     >();
     private readonly IMediator _mediator = Substitute.For<IMediator>();
-    private readonly IRepository<Folder> _folderRepository = Substitute.For<IRepository<Folder>>();
-    private FolderDeletedNotificationHandler _handler;
+    private readonly IRepository<Asset> _assetRepository = Substitute.For<IRepository<Asset>>();
+    private AssetDeletedNotificationHandler _handler;
 
-    public FolderDeletedNotificationHandlerHandle() =>
-        _handler = new(_logger, _mediator, _folderRepository);
+    public AssetDeletedNotificationHandlerHandle() =>
+        _handler = new(_logger, _mediator, _assetRepository);
 
     [Test]
-    public async Task DeleteFoldersMatchOwnerId()
+    public async Task DeleteAssetsMatchOwnerId()
     {
         // Given
-        var folder1 = Folder.CreateFromFolder("a", 1);
-        var folder2 = Folder.CreateFromFolder("b", 1);
-        List<Folder> folders = new() { folder1, folder2 };
-        _folderRepository
-            .ListAsync(Arg.Any<FoldersByParentIdSpec>(), Arg.Any<CancellationToken>())
-            .Returns(folders);
+        var asset1 = Asset.CreateFromAsset("a", 1);
+        var asset2 = Asset.CreateFromAsset("b", 1);
+        List<Asset> assets = new() { asset1, asset2 };
+        _assetRepository
+            .ListAsync(Arg.Any<AssetsByParentIdSpec>(), Arg.Any<CancellationToken>())
+            .Returns(assets);
 
         // When
         await _handler.Handle(new(UserFixture.IdToDelete), CancellationToken.None);
 
         // Then
-        await _folderRepository
+        await _assetRepository
             .Received(2)
-            .UpdateAsync(Arg.Any<Folder>(), Arg.Any<CancellationToken>());
+            .UpdateAsync(Arg.Any<Asset>(), Arg.Any<CancellationToken>());
         await _mediator
             .Received(2)
-            .Publish(Arg.Any<FolderDeletedEvent>(), Arg.Any<CancellationToken>());
+            .Publish(Arg.Any<AssetDeletedEvent>(), Arg.Any<CancellationToken>());
         Assert.Multiple(() =>
         {
-            Assert.That(folder1.Status, Is.EqualTo(FolderStatus.Deleted), nameof(folder1.Status));
-            Assert.That(folder2.Status, Is.EqualTo(FolderStatus.Deleted), nameof(folder2.Status));
+            Assert.That(asset1.Status, Is.EqualTo(AssetStatus.Deleted), nameof(asset1.Status));
+            Assert.That(asset2.Status, Is.EqualTo(AssetStatus.Deleted), nameof(asset2.Status));
         });
     }
 }

@@ -1,7 +1,7 @@
 using Ardalis.GuardClauses;
 using Ardalis.SharedKernel;
 
-using MiniAssetManagement.Core.FolderAggregate;
+using MiniAssetManagement.Core.AssetAggregate;
 using MiniAssetManagement.Core.UserAggregate;
 
 namespace MiniAssetManagement.Core.DriveAggregate;
@@ -12,8 +12,8 @@ public class Drive(string name, int ownerId) : EntityBase, IAggregateRoot
     public string Name { get; private set; } = Guard.Against.NullOrEmpty(name, nameof(name));
     public DriveStatus Status { get; private set; } = DriveStatus.Available;
 
-    public IEnumerable<Folder> Folders => _folders.AsReadOnly();
-    public readonly List<Folder> _folders = new();
+    public IEnumerable<Asset> Assets => _assets.AsReadOnly();
+    public readonly List<Asset> _assets = new();
 
     public User Owner { get; set; } = default!;
 
