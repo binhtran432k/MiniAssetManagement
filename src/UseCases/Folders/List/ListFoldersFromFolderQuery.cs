@@ -8,4 +8,4 @@ public record ListFoldersFromFolderQuery(
     int FolderId,
     int? Skip = null,
     int? Take = null
-) : IQuery<Result<IEnumerable<FolderDTO>>>;
+) : IQuery<Result<(IEnumerable<FolderDTO>, int)>>;

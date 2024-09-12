@@ -7,9 +7,9 @@ namespace MiniAssetManagement.UseCases.Folders.List;
 public class ListFoldersFromFolderHandler(
     IListFoldersQueryService _query,
     IGetFolderPermissionQueryService _permissionQuery
-) : IQueryHandler<ListFoldersFromFolderQuery, Result<IEnumerable<FolderDTO>>>
+) : IQueryHandler<ListFoldersFromFolderQuery, Result<(IEnumerable<FolderDTO>, int)>>
 {
-    public async Task<Result<IEnumerable<FolderDTO>>> Handle(
+    public async Task<Result<(IEnumerable<FolderDTO>, int)>> Handle(
         ListFoldersFromFolderQuery request,
         CancellationToken cancellationToken
     )

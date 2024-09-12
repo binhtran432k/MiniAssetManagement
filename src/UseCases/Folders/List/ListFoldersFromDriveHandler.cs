@@ -8,9 +8,9 @@ namespace MiniAssetManagement.UseCases.Folders.List;
 public class ListFoldersFromDriveHandler(
     IRepository<Drive> _driveRepository,
     IListFoldersQueryService _query
-) : IQueryHandler<ListFoldersFromDriveQuery, Result<IEnumerable<FolderDTO>>>
+) : IQueryHandler<ListFoldersFromDriveQuery, Result<(IEnumerable<FolderDTO>, int)>>
 {
-    public async Task<Result<IEnumerable<FolderDTO>>> Handle(
+    public async Task<Result<(IEnumerable<FolderDTO>, int)>> Handle(
         ListFoldersFromDriveQuery request,
         CancellationToken cancellationToken
     )

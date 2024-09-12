@@ -7,9 +7,11 @@ namespace MiniAssetManagement.IntegrationTests.Data.Queries;
 
 public class TestListFoldersQueryService : BaseTest
 {
-    private int _testUserId = default;
-    private int _testDriveId = default;
-    private int _testFolderId = default;
+    private int _testUserId;
+    private int _testDriveId;
+    private int _testFolderId;
+    private int _testFromDriveCount;
+    private int _testFromFolderCount;
 
     [SetUp]
     public async Task SetUpData()
@@ -30,11 +32,15 @@ public class TestListFoldersQueryService : BaseTest
         await repository.AddAsync(Folder.CreateFromDrive("baz", _testDriveId));
         await repository.AddAsync(Folder.CreateFromDrive("qux", _testDriveId));
 
+        _testFromDriveCount = 5;
+
         await repository.AddAsync(Folder.CreateFromFolder("foobar2", _testFolderId));
         await repository.AddAsync(Folder.CreateFromFolder("foo2", _testFolderId));
         await repository.AddAsync(Folder.CreateFromFolder("bar2", _testFolderId));
         await repository.AddAsync(Folder.CreateFromFolder("baz2", _testFolderId));
         await repository.AddAsync(Folder.CreateFromFolder("qux2", _testFolderId));
+
+        _testFromFolderCount = 5;
     }
 
     [TestCaseSource(nameof(SourceListFromDriveAsyncSuccess))]
@@ -46,10 +52,15 @@ public class TestListFoldersQueryService : BaseTest
         ListFoldersQueryService service = new(DbContext);
 
         // When
-        var drives = await service.ListFromDriveAsync(_testDriveId, props.Skip, props.Take);
+        var (drives, count) = await service.ListFromDriveAsync(
+            _testDriveId,
+            props.Skip,
+            props.Take
+        );
 
         // Then
         Assert.That(drives.Select(d => d.Name), Is.EquivalentTo(props.Expected), nameof(drives));
+        Assert.That(count, Is.EqualTo(_testFromDriveCount), nameof(count));
     }
 
     [TestCaseSource(nameof(SourceListFromFolderAsyncSuccess))]
@@ -61,10 +72,15 @@ public class TestListFoldersQueryService : BaseTest
         ListFoldersQueryService service = new(DbContext);
 
         // When
-        var drives = await service.ListFromFolderAsync(_testFolderId, props.Skip, props.Take);
+        var (drives, count) = await service.ListFromFolderAsync(
+            _testFolderId,
+            props.Skip,
+            props.Take
+        );
 
         // Then
         Assert.That(drives.Select(d => d.Name), Is.EquivalentTo(props.Expected), nameof(drives));
+        Assert.That(count, Is.EqualTo(_testFromFolderCount), nameof(count));
     }
 
     [Test]
@@ -74,10 +90,11 @@ public class TestListFoldersQueryService : BaseTest
         ListFoldersQueryService service = new(DbContext);
 
         // When
-        var drives = await service.ListFromDriveAsync(0);
+        var (drives, count) = await service.ListFromDriveAsync(0);
 
         // Then
         Assert.That(drives, Is.Empty, nameof(drives));
+        Assert.That(count, Is.EqualTo(0), nameof(count));
     }
 
     [Test]
@@ -87,10 +104,11 @@ public class TestListFoldersQueryService : BaseTest
         ListFoldersQueryService service = new(DbContext);
 
         // When
-        var drives = await service.ListFromFolderAsync(0);
+        var (drives, count) = await service.ListFromFolderAsync(0);
 
         // Then
         Assert.That(drives, Is.Empty, nameof(drives));
+        Assert.That(count, Is.EqualTo(0), nameof(count));
     }
 
     public static IEnumerable<(int?, int?, IEnumerable<string>)> SourceListFromDriveAsyncSuccess()
