@@ -29,6 +29,6 @@ public class UpdateAssetHandler(
         existingAsset.UpdateName(request.NewName);
         await _repository.UpdateAsync(existingAsset, cancellationToken);
 
-        return new AssetDTO(existingAsset.Id, existingAsset.Name);
+        return new AssetDTO(existingAsset.Id, existingAsset.Name, existingAsset.FileType);
     }
 }

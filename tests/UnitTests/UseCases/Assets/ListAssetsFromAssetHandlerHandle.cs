@@ -27,7 +27,7 @@ public class ListAssetsFromAssetHandlerHandle
         _permissionService
             .GetAsync(Arg.Any<int>(), Arg.Any<int>())
             .Returns(PermissionType.FromName(adminPermissionName));
-        List<AssetDTO> drives = [new(1, "foo"), new(2, "bar")];
+        List<AssetDTO> drives = [new(1, "foo", null), new(2, "bar", null)];
         _service
             .ListFromAssetAsync(AssetFixture.ParentIdDefault, Arg.Any<int?>(), Arg.Any<int?>())
             .Returns((drives, 2));
@@ -49,7 +49,7 @@ public class ListAssetsFromAssetHandlerHandle
     {
         // Given
         _permissionService.GetAsync(Arg.Any<int>(), Arg.Any<int>()).Returns((PermissionType?)null);
-        List<AssetDTO> drives = [new(1, "foo"), new(2, "bar")];
+        List<AssetDTO> drives = [new(1, "foo", null), new(2, "bar", null)];
         _service
             .ListFromAssetAsync(AssetFixture.ParentIdDefault, Arg.Any<int?>(), Arg.Any<int?>())
             .Returns((drives, 2));
