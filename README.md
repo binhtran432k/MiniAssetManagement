@@ -1,5 +1,8 @@
 # Mini Asset Management System
 
+[![CI workflow](https://github.com/binhtran432k/MiniAssetManagement/actions/workflows/ci.yml/badge.svg)](https://github.com/binhtran432k/MiniAssetManagement/actions/workflows/ci.yml)
+[![Code Coverage](https://img.shields.io/badge/Code%20Coverage-97%25-success?style=flat)](https://github.com/binhtran432k/MiniAssetManagement/pull/40#issuecomment-2350788268)
+
 This project is a demonstration of clean architecture principles and ASP.NET
 implementation. It focuses on managing assets with role-based access control
 (RBAC). Unlike traditional user roles, asset roles specifically define user
